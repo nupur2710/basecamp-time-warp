@@ -147,7 +147,6 @@ export class TasksComponent implements OnInit {
         this.serverService.getRecentActivities()
             .subscribe(
                 function(response: Response) {
-                    console.log(response);
                     self.displayRecentData(response);
                     self.generateTheFinalTodoDisplayList();
                 },
@@ -247,6 +246,7 @@ export class TasksComponent implements OnInit {
                 }
             }
         }
+        console.log(this.finalTodoList);
     }
 
 

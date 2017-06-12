@@ -15,12 +15,28 @@
                 </li>
             </ul> -->
             <br/>
-            <ul class="list-group" *ngFor="let item of finalTodoList">
+            <!--   <ul class="list-group" *ngFor="let item of finalTodoList">
                 <li class="list-group-item">Item Id : {{ item.id }} </li>
                 <li class="list-group-item">Item Name : {{ item.name }} </li>
                 <li class="list-group-item">CreatedBy : {{ item.createdBy }} </li>
                 <li class="list-group-item">Assigned To : {{ item.assignedTo }} </li>
                 <li class="list-group-item">Due Date : {{ item.dueDate }} </li>
+            </ul> -->
+            <ul class="filter-list unstyled-listing" *ngFor="let item of finalTodoList">
+                <li class="filter-grp-list activity-list">
+                    <a href="javascript:void(0)" class="filter-grp-Head clearfix collapse">
+                        <span class="activity-name">Id: {{ item.id }}</span>
+                        <br>
+                        <span class="activity-name">Activity name: {{ item.name }}</span>
+                        <span href="" class="btn-show">Enter time</span>
+                        <div class="clearfix"></div>
+                        <span class="card-description">CreatedBy : {{ item.createdBy }}</span>
+                        <br>
+                        <span class="card-description">Assigned To : {{ item.assignedTo }} </span>
+                        <br>
+                        <span class="card-description">Due Date : {{ item.dueDate }}</span>
+                    </a>
+                </li>
             </ul>
         </div>
     </div>

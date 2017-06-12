@@ -25,7 +25,9 @@ app.get("/auth/basecamp", function(req, res, next) {
     console.log("my code is " + verificationCode);
 
 
-    //"https://launchpad.37signals.com/authorization/token?type=web_server&client_id=d119a53aed7fabe1407f1e34f7f29053da10b3bd&redirect_uri=http%3A%2F%2F192.168.0.175%3A3001%2F%2Fauth%2Fbasecamp&client_secret=04241c29abfcfce82686bd384e8585b722abd14e&code=" 
+    // prod link "https://launchpad.37signals.com/authorization/token?type=web_server&client_id=d119a53aed7fabe1407f1e34f7f29053da10b3bd&redirect_uri=http%3A%2F%2F192.168.0.175%3A3001%2F%2Fauth%2Fbasecamp&client_secret=04241c29abfcfce82686bd384e8585b722abd14e&code=" 
+
+    //local link https://launchpad.37signals.com/authorization/token?type=web_server&client_id=f580e2bd7a470f2bade0a2670696e1c3edb7b7d1&redirect_uri=http%3A%2F%2F127.0.0.1%3A3001%2Fauth%2Fbasecamp&client_secret=67090f417bb8ef3d26f9aab9529e394539984f5d&code=
 
     request.post({
         url: "https://launchpad.37signals.com/authorization/token?type=web_server&client_id=f580e2bd7a470f2bade0a2670696e1c3edb7b7d1&redirect_uri=http%3A%2F%2F127.0.0.1%3A3001%2Fauth%2Fbasecamp&client_secret=67090f417bb8ef3d26f9aab9529e394539984f5d&code=" + verificationCode,
@@ -35,8 +37,10 @@ app.get("/auth/basecamp", function(req, res, next) {
         console.log("token is " + accessToken);
         console.log("success");
 
-        //http://192.168.0.175:8010/timewrap/timewarp?accessToken=
-        return res.redirect('http://127.0.0.1:4200/timewarp?accessToken=' + accessToken);
+        // prod link http://192.168.0.175:8010/timewrap/tasks?accessToken=
+
+        //local link http://127.0.0.1:4200/timewarp?accessToken=
+        return res.redirect('http://127.0.0.1:4200/tasks?accessToken=' + accessToken);
     });
 
 });

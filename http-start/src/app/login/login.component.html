@@ -1,7 +1,11 @@
 <div class="container">
     <div class="row" *ngIf="!isLoggedIn(); else welcome">
-        <h2>Welcome to the Basecamp Time Wrap</h2>
-        <button class="btn btn-success" (click)="onLoginClick()">Click to Login</button>
+        <div class="col col12 app-container">
+            <h1 class="title">Welcome to the Basecamp Time Wrap</h1>
+            <div class="button-container">
+                <a class="btn-continue" (click)="onLoginClick()">Click to Login</a>
+            </div>
+        </div>
     </div>
     <ng-template #welcome>
         <div class="row">

@@ -3,7 +3,7 @@ import { Routes, RouterModule } from '@angular/router';
 import { TasksComponent } from './tasks/tasks.component';
 
 const appRoutes: Routes = [{
-    path: 'timewarp',
+    path: 'tasks',
     component: TasksComponent
 }];
 
