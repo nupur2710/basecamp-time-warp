@@ -1,0 +1,89 @@
+
+curl https: //paperplane.basecamphq.com/projects/12099836-cloudlock-design-development-projects/todo_lists  -u 6fb0faaf3de684d891cb9413fdd5e1ec978a379a
+
+
+    https: //paperplane.basecamphq.com/projects/12099836-cloudlock-design-development-projects/categories.xml
+
+    curl - u nupur @paperplane.net: nupur123 - H 'User-Agent: MyApp (nupur@paperplane.net'
+https: //basecamp.com/6fb0faaf3de684d891cb9413fdd5e1ec978a379a/api/v1/projects.json
+
+
+    curl - u 6 fb0faaf3de684d891cb9413fdd5e1ec978a379a: X https: //paperplane.basecamphq.com/
+
+
+    (response) => document.getElementsByTagName("BODY")[0].appendChild(response["_body"]),
+
+
+    https://paperplane.basecamphq.com/projects/12099836-cloudlock-design-development-projects/todo_lists.xml?u=6fb0faaf3de684d891cb9413fdd5e1ec978a379a&password=nupur123
+
+
+    https: //launchpad.37signals.com/authorization/new?client_id=d119a53aed7fabe1407f1e34f7f29053da10b3bd&redirect_uri=https://paperplane.basecamphq.com&type=web_server
+
+    https: //paperplane.basecamphq.com/projects/12099836-cloudlock-design-development-projects/log
+
+
+    curl - u rajeev @paperplane.net: nupur123 - H 'User-Agent: MyApp (yourname@example.com)'
+https: //basecamp.com/1759127/api/v1/projects.json
+
+
+
+    curl - u parvez@paperplane.net:Foucault84 https: //basecamp.com/1759127/api/v1/projects.json
+
+
+
+
+
+parvez@paperplane.net:Foucault84@https://basecamp.com/1759127/api/v1/projects.json
+
+    getServers() {
+        var username = 'parvez@paperplane.net';
+        var password = 'Foucault84';
+        var url = '/api/v1/people.json'
+        return this.http.get(url);
+
+
+    }
+
+
+{
+    "/api/": {
+        "target": "https://basecamp.com/1759127/",
+        "secure": false,
+        "logLevel": "debug",
+        "changeOrigin": true,
+        "pathRewrite": { "^/proxy": "" }
+    }
+}
+
+https://launchpad.37signals.com/authorization/new?type=web_server&client_id=f9e9d33b8f92657097c7bc5eeb917d19e645891c&redirect_uri=localhost:4200/
+
+https://launchpad.37signals.com/authorization/new?type=web_server&client_id=f9e9d33b8f92657097c7bc5eeb917d19e645891c&redirect_uri=localhost:4200/
+
+
+
+
+for proxy.html file
+
+# ProxyPass "/" "https://paperplane.basecamphq.com"
+# <Location /my-gateway/>
+#   ProxyPassReverse /
+#   ProxyHTMLEnable On
+#   ProxyHTMLURLMap https://paperplane.basecamphq.com /
+#   ProxyHTMLURLMap / /
+# </Location>
+
+
+
+for httpd.conf
+    ProxyPass        "/" "https://paperplane.basecamphq.com/"
+    ProxyPassReverse "/" "https://paperplane.basecamphq.com/"
+    ServerName 192.168.0.175:8010
+
+    
+"/": {
+        "target": "https://paperplane.basecamphq.com",
+        "secure": false,
+        "logLevel": "debug",
+        "changeOrigin": true,
+        "pathRewrite": { "^/proxy": "" }
+    },

@@ -1,0 +1,12 @@
+<div class="container">
+    <div class="row" *ngIf="!isLoggedIn(); else welcome">
+        <h2>Welcome to the Basecamp Time Wrap</h2>
+        <button class="btn btn-success" (click)="onLoginClick()">Click to Login</button>
+    </div>
+    <ng-template #welcome>
+        <div class="row">
+            <h2>Hello, {{user}}</h2>
+            <h4>Below is the lists of recent tasks (assigned to you):</h4>
+        </div>
+    </ng-template>
+</div>

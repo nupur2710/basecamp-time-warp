@@ -1,0 +1,8 @@
+{
+    "/": {
+        "target": "https://paperplane.basecamphq.com",
+        "secure": false,
+        "logLevel": "debug",
+        "changeOrigin": true   
+    }
+}

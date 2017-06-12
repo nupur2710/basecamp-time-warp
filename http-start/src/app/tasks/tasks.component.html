@@ -1,0 +1,27 @@
+<div class="container">
+    <div class="row">
+        <div class="people" *ngIf=todos>
+            <!--   <ul class="list-group" *ngFor="let todo of todos">
+                <li class="list-group-item">Todo List Name : {{ todo.todoName }} </li>
+                <li class="list-group-item">Todo Id : {{ todo.todoId }} </li>
+                <li class="list-group-item">
+                    <ul class="list-group" *ngFor="let item of todo.todoItems">
+                        <li class="list-group-item">Item Id : {{ item.id }} </li>
+                        <li class="list-group-item">Item Name : {{ item.name }} </li>
+                        <li class="list-group-item">CreatedBy : {{ item.createdBy }} </li>
+                        <li class="list-group-item">Assigned To : {{ item.assignedTo }} </li>
+                        <li class="list-group-item">Due Date : {{ item.dueDate }} </li>
+                    </ul>
+                </li>
+            </ul> -->
+            <br/>
+            <ul class="list-group" *ngFor="let item of finalTodoList">
+                <li class="list-group-item">Item Id : {{ item.id }} </li>
+                <li class="list-group-item">Item Name : {{ item.name }} </li>
+                <li class="list-group-item">CreatedBy : {{ item.createdBy }} </li>
+                <li class="list-group-item">Assigned To : {{ item.assignedTo }} </li>
+                <li class="list-group-item">Due Date : {{ item.dueDate }} </li>
+            </ul>
+        </div>
+    </div>
+</div>

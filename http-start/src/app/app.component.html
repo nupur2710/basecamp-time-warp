@@ -1,0 +1,20 @@
+<div class="container">
+    <div class="row">
+        <div class="col-xs-12 col-sm-10 col-md-8 col-sm-offset-1 col-md-offset-2">
+            <app-login (changeLogStatus)="changeLoggedStatus($event)"></app-login>
+        </div>
+    </div>
+    <br>
+    <router-outlet></router-outlet>
+    <div class="row" *ngIf="isLoggedIn">
+        <div class="col-xs-12 col-sm-10 col-md-8 col-sm-offset-1 col-md-offset-2">
+            <app-home></app-home>
+            <app-user-details></app-user-details>
+            <app-tasks></app-tasks>
+            <hr>
+            <app-notification></app-notification>
+            <hr>
+            <app-enter-time class="enter-time"></app-enter-time>
+        </div>
+    </div>
+</div>
