@@ -3,7 +3,7 @@ var app = express();
 
 
 var querystring = require('querystring');
-var https = require('https');
+
 var to_json = require('xmljson').to_json;
 var request = require('request'),
     url = 'https://paperplane.basecamphq.com',
@@ -82,7 +82,7 @@ app.get('/me', function(req, res) {
 app.get('/rss', function(req, res) {
     request({
         url: url + '/feed/recent_items_rss',
-       headers: {
+        headers: {
             "Authorization": "Bearer " + req.query.accessToken
         }
     }, function(error, response, body) {
@@ -90,6 +90,32 @@ app.get('/rss', function(req, res) {
             res.json(data);
         });
 
+    });
+});
+
+app.get('/todoItems/timeEntries', function(req, res) {
+    request({
+        url: url + '/todo_items/' + req.query.itemId + '/time_entries.xml',
+        headers: {
+            "Authorization": "Bearer " + req.query.accessToken
+        }
+    }, function(error, response, body) {
+        to_json(body, function(error, data) {
+            
+            res.json(data);
+        });
+
+    });
+});
+
+
+app.post('/time_entries/:itemId', function(req, res) {
+    request.post({
+        url: url + '/todo_items/' + itemId + '/time_entries.xml'
+    }, function(error, response, body) {
+        console.log(error);
+        console.log(response);
+        console.log(body);
     });
 });
 

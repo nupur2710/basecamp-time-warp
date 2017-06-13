@@ -26,8 +26,9 @@ export class LoginComponent implements OnInit {
                     function(response: Response) {
                         var body = JSON.parse(response['_body']),
                             fname = body.person['first-name'],
-                            lname = body.person['last-name'];
-                        self.setNameToLocalStorage(fname);
+                            lname = body.person['last-name'],
+                            personId = body.person['id'];
+                        self.setNameToLocalStorage(fname, personId);
                         self.user = fname + " " + lname;
                     },
                     (error) => console.log(error)
@@ -36,8 +37,12 @@ export class LoginComponent implements OnInit {
 
     }
 
-    setNameToLocalStorage(fname) {
-        window.localStorage.setItem("user-fname", fname);
+    setNameToLocalStorage(fname, personId) {
+        var userDetails = {
+            "user-fname": fname,
+            "person_id": personId
+        }
+        window.localStorage.setItem('userDetails', JSON.stringify(userDetails));
     }
 
     onLoginClick() {
@@ -46,7 +51,7 @@ export class LoginComponent implements OnInit {
 
         //local link "https://launchpad.37signals.com/authorization/new?client_id=f580e2bd7a470f2bade0a2670696e1c3edb7b7d1&redirect_uri=http%3A%2F%2F127.0.0.1%3A3001%2Fauth%2Fbasecamp&type=web_server"
 
-        
+
         window.location.href = "https://launchpad.37signals.com/authorization/new?client_id=f580e2bd7a470f2bade0a2670696e1c3edb7b7d1&redirect_uri=http%3A%2F%2F127.0.0.1%3A3001%2Fauth%2Fbasecamp&type=web_server";
     }
 

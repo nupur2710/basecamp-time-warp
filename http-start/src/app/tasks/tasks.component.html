@@ -28,7 +28,7 @@
                         <span class="activity-name">Id: {{ item.id }}</span>
                         <br>
                         <span class="activity-name">Activity name: {{ item.name }}</span>
-                        <span href="" class="btn-show">Enter time</span>
+                        <span href="" class="btn-show" (click)="onEnterTime(item)">Enter time</span>
                         <div class="clearfix"></div>
                         <span class="card-description">CreatedBy : {{ item.createdBy }}</span>
                         <br>
@@ -36,8 +36,46 @@
                         <br>
                         <span class="card-description">Due Date : {{ item.dueDate }}</span>
                     </a>
+                    <a (click)='viewTimeLogs($event)' style="cursor:pointer"> View time logs</a>
+                    <div class="collapse-data">
+                        <div class="card-info activities-card">
+                            <table class="table bordered-table">
+                                <thead class="table-header">
+                                    <tr class="table-row">
+                                        <th class="column-header">Date</th>
+                                        <th class="column-header">Person</th>
+                                        <th class="column-header">Time</th>
+                                        <th class="column-header">Description</th>
+                                    </tr>
+                                    <!-- table-row -->
+                                </thead>
+                                <!-- table-header -->
+                                <tbody class="table-body" *ngFor="let singleLog of item.finalTimeLogs">
+                                    <tr class="table-row">
+                                        <td class="column-division">{{singleLog.date}}</td>
+                                        <td class="column-division">{{singleLog.person}}</td>
+                                        <td class="column-division">{{singleLog.hours}}</td>
+                                        <td class="column-division">{{singleLog.description}}</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
                 </li>
             </ul>
         </div>
     </div>
 </div>
+<script type="text/javascript">
+jQuery(".collapse").click(function() {
+    if (jQuery(this).hasClass("active") == false) {
+        if (jQuery(this).next(".collapse-data").find) {
+            jQuery(this).next(".collapse-data").slideToggle();
+        }
+    } else {
+        jQuery(this).next(".collapse-data").slideToggle();
+        jQuery(this).removeClass("active");
+    }
+    return false;
+});
+</script>

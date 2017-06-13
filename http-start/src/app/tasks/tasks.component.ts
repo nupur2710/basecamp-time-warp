@@ -16,10 +16,10 @@ export class TasksComponent implements OnInit {
     recentTodos: any[] = [];
     subscription: Subscription;
     finalTodoList: any[] = [];
+    finalTimeLogs: any[] = [];
 
 
     constructor(private serverService: AuthServerService, private route: ActivatedRoute, private dataService: DataService) {
-
         this.route
             .queryParams
             .subscribe(params => {
@@ -30,8 +30,6 @@ export class TasksComponent implements OnInit {
         this.setAccessTokenToLocalStorage(this.dataService.code);
         this.todos = this.dataService.getTodos();
         this.onGetTasks();
-
-
     }
 
     ngOnInit() {
@@ -42,6 +40,17 @@ export class TasksComponent implements OnInit {
         )
         this.todos = this.dataService.getTodos();
     }
+
+    // onEnterTime(item) {
+    //     var data = {
+    //         "hours": 2,
+    //         "date": new Date()
+    //     };
+    //     //get data from form
+    //     this.serverService.postTimeEntries(item.id, data);
+    // }
+
+
 
     setAccessTokenToLocalStorage(token) {
         localStorage.setItem("accessToken", token);
@@ -155,7 +164,7 @@ export class TasksComponent implements OnInit {
     }
 
     getFnameFromLocalStorage() {
-        return window.localStorage.getItem("user-fname");
+        return JSON.parse(window.localStorage.getItem('userDetails'))['user-fname'];
     }
 
     displayRecentData(response) {
@@ -194,11 +203,9 @@ export class TasksComponent implements OnInit {
             }
         }
         self.setRecentItemsToLocalStorage();
-
     }
 
     setRecentItemsToLocalStorage() {
-
         var updatedRecentTodos = this.removeDuplicateTodoItems();
         window.localStorage.setItem("recentTodos", JSON.stringify(updatedRecentTodos));
     }
@@ -222,7 +229,6 @@ export class TasksComponent implements OnInit {
             updatedRecentTodos.push(i);
         }
         return updatedRecentTodos;
-
     }
 
 
@@ -247,6 +253,84 @@ export class TasksComponent implements OnInit {
             }
         }
         console.log(this.finalTodoList);
+        this.getTimeLogs();
+    }
+
+    viewTimeLogs($event) {
+        if ($event.target.nextElementSibling.style.display === "block") {
+            $event.target.nextElementSibling.style.display = "none";
+            return;
+        } else {
+            $event.target.nextElementSibling.style.display = "block";
+        }
+    }
+
+    getTimeLogs() {
+        var index, self = this;
+        for (index = 0; index < this.finalTodoList.length; index++) {
+            this.serverService.getTimeEntriesForSingleTodoItem(this.finalTodoList[index].id).subscribe(
+                function(response: Response) {
+                    self.displayTimeLogs(response);
+
+                },
+                (error) => console.log(error)
+            );
+        }
+
+    }
+
+    displayTimeLogs(response) {
+        if (response) {
+            var index,
+                responseData = response["_body"] ? JSON.parse(response["_body"]) : null,
+                timeEntry, listItem, singleItem, timeLogs, finalTimeLogs = [];
+
+            if (responseData && responseData['time-entries']) {
+                timeEntry = responseData['time-entries']['time-entry'];
+
+                if (timeEntry.hasOwnProperty('0')) {
+                    timeLogs = Object.keys(timeEntry).map(function(e) {
+                        return [timeEntry[e]];
+                    });
+                    for (index = 0; index < timeLogs.length; index++) {
+                        listItem = {};
+                        singleItem = timeLogs[index][0];
+
+                        if (singleItem) {
+                            listItem = {
+                                "date": singleItem['date'],
+                                "person": singleItem['person-name'],
+                                "hours": singleItem['hours'],
+                                "description": singleItem['description']
+                            };
+                            finalTimeLogs.push(listItem);
+                        }
+                    }
+                } else {
+                    singleItem = timeEntry;
+
+                    if (singleItem) {
+                        listItem = {
+                            "date": singleItem['date'],
+                            "person": singleItem['person-name'],
+                            "hours": singleItem['hours'],
+                            "description": singleItem['description']
+                        };
+                        finalTimeLogs.push(listItem);
+                    }
+                }
+
+                for (index = 0; index < this.finalTodoList.length; index++) {
+                    if (this.finalTodoList[index].id === singleItem['todo-item-id']) {
+                        this.finalTodoList[index].finalTimeLogs = finalTimeLogs;
+                    }
+                }
+
+
+
+            }
+
+        }
     }
 
 
