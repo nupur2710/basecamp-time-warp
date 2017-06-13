@@ -40,25 +40,24 @@ export class AuthServerService {
         });
     }
 
-    getTimeEntriesForSingleTodoItem(itemId){
-        var url = this.baseUrl+'todoItems/timeEntries';
-        return this.http.get(url,{
+    getTimeEntriesForSingleTodoItem(itemId) {
+        var url = this.baseUrl + 'todoItems/timeEntries';
+        return this.http.get(url, {
             params: {
                 "accessToken": localStorage.getItem('accessToken'),
-                'itemId':itemId
+                'itemId': itemId
             }
         });
     }
 
     postTimeEntries(itemId, data) {
-        var url = this.baseUrl + 'time_entries/' + itemId;
-        return this.http.post(url, {
+       
+        var url = this.baseUrl + 'todoItems/makeTimeEntries';
+        return this.http.get(url, {
             params: {
-                accessToken: localStorage.getItem('accessToken')
-            },
-            data:{
-                'itemId':itemId,
-                'personId':localStorage.getItem('person_id')
+                "accessToken": localStorage.getItem('accessToken'),
+                'itemId': itemId,
+                'data':data
             }
         });
     }

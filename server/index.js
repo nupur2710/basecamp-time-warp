@@ -3,6 +3,7 @@ var app = express();
 
 
 var querystring = require('querystring');
+var jsonxml = require('jsontoxml');
 
 var to_json = require('xmljson').to_json;
 var request = require('request'),
@@ -94,6 +95,7 @@ app.get('/rss', function(req, res) {
 });
 
 app.get('/todoItems/timeEntries', function(req, res) {
+
     request({
         url: url + '/todo_items/' + req.query.itemId + '/time_entries.xml',
         headers: {
@@ -101,7 +103,7 @@ app.get('/todoItems/timeEntries', function(req, res) {
         }
     }, function(error, response, body) {
         to_json(body, function(error, data) {
-            
+
             res.json(data);
         });
 
@@ -109,15 +111,26 @@ app.get('/todoItems/timeEntries', function(req, res) {
 });
 
 
-app.post('/time_entries/:itemId', function(req, res) {
+app.get('/todoItems/makeTimeEntries', function(req, res) {
+    var data = jsonxml(req.query.data);
+    console.log(data);
     request.post({
-        url: url + '/todo_items/' + itemId + '/time_entries.xml'
+        url: url + '/todo_items/' + req.query.itemId + '/time_entries.xml',
+        headers: {
+            "Authorization": "Bearer " + req.query.accessToken,
+            "Content-Type": "application/xml"
+        },
+        body: data
     }, function(error, response, body) {
-        console.log(error);
-        console.log(response);
-        console.log(body);
+        if (!error) {
+            res.json({ "message": "success" })
+        }
+
+
     });
 });
+
+
 
 app.listen(3001);
 console.log("listening on localhost 3001");

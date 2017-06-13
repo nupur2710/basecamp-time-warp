@@ -41,14 +41,23 @@ export class TasksComponent implements OnInit {
         this.todos = this.dataService.getTodos();
     }
 
-    // onEnterTime(item) {
-    //     var data = {
-    //         "hours": 2,
-    //         "date": new Date()
-    //     };
-    //     //get data from form
-    //     this.serverService.postTimeEntries(item.id, data);
-    // }
+    onEnterTime($event, item) {
+        var data = {
+            "time-entry": {
+                "person-id": 469337,
+                "date": "2017-06-14T20:30:00Z",
+                "hours": 2,
+                "description": "demo"
+            }
+        };
+        //get data from form
+        this.serverService.postTimeEntries(item.id, data).subscribe(
+            function(response: Response) {
+                console.log(response);
+            },
+            (error) => console.log(error)
+        );
+    }
 
 
 
@@ -325,8 +334,6 @@ export class TasksComponent implements OnInit {
                         this.finalTodoList[index].finalTimeLogs = finalTimeLogs;
                     }
                 }
-
-
 
             }
 
