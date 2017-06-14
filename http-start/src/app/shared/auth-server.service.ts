@@ -50,13 +50,13 @@ export class AuthServerService {
         });
     }
 
-    postTimeEntries(itemId, data) {
+    postTimeEntries(item, data) {
        
         var url = this.baseUrl + 'todoItems/makeTimeEntries';
         return this.http.get(url, {
             params: {
                 "accessToken": localStorage.getItem('accessToken'),
-                'itemId': itemId,
+                'itemId': item.id,
                 'data':data
             }
         });

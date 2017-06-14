@@ -5,7 +5,7 @@ import { Subscription } from 'rxjs/Subscription';
 import { Response } from '@angular/http';
 import { ActivatedRoute, Params } from '@angular/router';
 import { AuthServerService } from '../shared/auth-server.service';
-import { NgForm } from '@angular/forms'; 
+import { NgForm } from '@angular/forms';
 
 declare const $: JQueryStatic;
 
@@ -48,35 +48,50 @@ export class TasksComponent implements OnInit {
     onEnterTime($event, item) {
         $('.modal-content').toggleClass('popup-show');
         $('.close').toggleClass('close-show');
+        this.hideSuccessMessage();
         this.currentItem = item;
     }
 
-    onCloseClick($event) {
+    onCloseClick() {
         $('.modal-content').removeClass('popup-show');
-        $($event.target).removeClass("close-show");
+        $('.close').toggleClass('close-show');
         this.currentItem = {};
     }
 
-    onAddClick($event, item) {
+    hideSuccessMessage() {       
+        $("#normalform").css("display", "block");
+        $(".block-msg.sucess").css("display", "none");
+    }
+
+    showSuccessMessage() {
+       
+        $(".block-msg.sucess").css("display", "block");
+        $("#normalform").css("display", "none");
+    }
+
+    onCancelClick() {
+        this.onCloseClick();
+    }
+
+    onSubmit(f) {
         var data = {
             "time-entry": {
                 "person-id": JSON.parse(localStorage.getItem('userDetails'))['person_id'],
                 "date": new Date(),
-                "hours": 2,
-                "description": "demo"
+                "hours": f.value['task-time'],
+                "description": f.value['task-description']
             }
         };
-        //get data from form
-        this.serverService.postTimeEntries(item.id, data).subscribe(
+        var self = this;
+
+        this.serverService.postTimeEntries(this.currentItem, data).subscribe(
             function(response: Response) {
                 console.log(response);
+                self.showSuccessMessage();
+
             },
             (error) => console.log(error)
         );
-    }
-
-    onCancelClick($event) {
-
     }
 
 
@@ -196,43 +211,6 @@ export class TasksComponent implements OnInit {
         return JSON.parse(window.localStorage.getItem('userDetails'))['user-fname'];
     }
 
-    // displayRecentData(response) {
-    //     var self = this,
-    //         itemObject = JSON.parse(response["_body"]).rss.channel.item,
-    //         itemObjectLength = Object.keys(itemObject).length,
-    //         index, title, singleItem = {};
-
-    //     for (index = 0; index < itemObjectLength; index++) {
-    //         if (itemObject[index]) {
-    //             var assignee = itemObject[index].title.substring(itemObject[index].title.indexOf('(') + 1, itemObject[index].title.indexOf('responsible')),
-    //                 fname = assignee.substring(0, assignee.indexOf(" "));
-    //             singleItem = {};
-    //             //check to list data for the logged in user
-    //             if (this.getFnameFromLocalStorage() === fname) {
-    //                 if (itemObject[index].title) {
-    //                     title = itemObject[index].title;
-    //                     if (title.charAt(0) === "T" && title.indexOf("Todo") === 0) {
-    //                         if (itemObject[index].title.indexOf("(")) {
-    //                             singleItem = {
-    //                                 "todoItemName": itemObject[index].title.substring(itemObject[index].title.indexOf(":") + 2, itemObject[index].title.indexOf("(") - 1)
-    //                             }
-    //                             self.recentTodos.push(singleItem);
-    //                         }
-
-
-
-    //                     } else if (title.charAt(0) === "C" && title.indexOf("Comment") === 0) {
-    //                         singleItem = {
-    //                             "todoItemName": itemObject[index].title.substring(itemObject[index].title.lastIndexOf(":") + 2)
-    //                         }
-    //                         self.recentTodos.push(singleItem);
-    //                     }
-    //                 }
-    //             }
-    //         }
-    //     }
-    //     self.setRecentItemsToLocalStorage();
-    // }
     displayRecentData(response) {
         var self = this,
             itemObject = JSON.parse(response["_body"]).rss.channel.item,
