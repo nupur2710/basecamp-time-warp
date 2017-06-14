@@ -21,6 +21,7 @@ export class TasksComponent implements OnInit {
     finalTodoList: any[] = [];
     finalTimeLogs: any[] = [];
     currentItem = {};
+    currentDate: string;
     @ViewChild('f') signupForm: NgForm;
 
     constructor(private serverService: AuthServerService, private route: ActivatedRoute, private dataService: DataService) {
@@ -34,6 +35,8 @@ export class TasksComponent implements OnInit {
         this.setAccessTokenToLocalStorage(this.dataService.code);
         this.todos = this.dataService.getTodos();
         this.onGetTasks();
+        var date = new Date()
+        this.currentDate = date.getDate() + '/' +(date.getMonth() + 1) + '/' + date.getFullYear()
     }
 
     ngOnInit() {
@@ -58,13 +61,13 @@ export class TasksComponent implements OnInit {
         this.currentItem = {};
     }
 
-    hideSuccessMessage() {       
+    hideSuccessMessage() {
         $("#normalform").css("display", "block");
         $(".block-msg.sucess").css("display", "none");
     }
 
     showSuccessMessage() {
-       
+
         $(".block-msg.sucess").css("display", "block");
         $("#normalform").css("display", "none");
     }
@@ -77,7 +80,7 @@ export class TasksComponent implements OnInit {
         var data = {
             "time-entry": {
                 "person-id": JSON.parse(localStorage.getItem('userDetails'))['person_id'],
-                "date": new Date(),
+                "date": f.value['task-date'],
                 "hours": f.value['task-time'],
                 "description": f.value['task-description']
             }
@@ -87,6 +90,7 @@ export class TasksComponent implements OnInit {
         this.serverService.postTimeEntries(this.currentItem, data).subscribe(
             function(response: Response) {
                 console.log(response);
+                self.getTimeLogs();
                 self.showSuccessMessage();
 
             },
