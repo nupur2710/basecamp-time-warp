@@ -1,10 +1,13 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { Todo } from './todo.model';
 import { DataService } from '../shared/data.service';
 import { Subscription } from 'rxjs/Subscription';
 import { Response } from '@angular/http';
 import { ActivatedRoute, Params } from '@angular/router';
 import { AuthServerService } from '../shared/auth-server.service';
+import { NgForm } from '@angular/forms'; 
+
+declare const $: JQueryStatic;
 
 @Component({
     selector: 'app-tasks',
@@ -17,7 +20,8 @@ export class TasksComponent implements OnInit {
     subscription: Subscription;
     finalTodoList: any[] = [];
     finalTimeLogs: any[] = [];
-
+    currentItem = {};
+    @ViewChild('f') signupForm: NgForm;
 
     constructor(private serverService: AuthServerService, private route: ActivatedRoute, private dataService: DataService) {
         this.route
@@ -42,10 +46,22 @@ export class TasksComponent implements OnInit {
     }
 
     onEnterTime($event, item) {
+        $('.modal-content').toggleClass('popup-show');
+        $('.close').toggleClass('close-show');
+        this.currentItem = item;
+    }
+
+    onCloseClick($event) {
+        $('.modal-content').removeClass('popup-show');
+        $($event.target).removeClass("close-show");
+        this.currentItem = {};
+    }
+
+    onAddClick($event, item) {
         var data = {
             "time-entry": {
-                "person-id": 469337,
-                "date": "2017-06-14T20:30:00Z",
+                "person-id": JSON.parse(localStorage.getItem('userDetails'))['person_id'],
+                "date": new Date(),
                 "hours": 2,
                 "description": "demo"
             }
@@ -57,6 +73,10 @@ export class TasksComponent implements OnInit {
             },
             (error) => console.log(error)
         );
+    }
+
+    onCancelClick($event) {
+
     }
 
 
@@ -176,6 +196,43 @@ export class TasksComponent implements OnInit {
         return JSON.parse(window.localStorage.getItem('userDetails'))['user-fname'];
     }
 
+    // displayRecentData(response) {
+    //     var self = this,
+    //         itemObject = JSON.parse(response["_body"]).rss.channel.item,
+    //         itemObjectLength = Object.keys(itemObject).length,
+    //         index, title, singleItem = {};
+
+    //     for (index = 0; index < itemObjectLength; index++) {
+    //         if (itemObject[index]) {
+    //             var assignee = itemObject[index].title.substring(itemObject[index].title.indexOf('(') + 1, itemObject[index].title.indexOf('responsible')),
+    //                 fname = assignee.substring(0, assignee.indexOf(" "));
+    //             singleItem = {};
+    //             //check to list data for the logged in user
+    //             if (this.getFnameFromLocalStorage() === fname) {
+    //                 if (itemObject[index].title) {
+    //                     title = itemObject[index].title;
+    //                     if (title.charAt(0) === "T" && title.indexOf("Todo") === 0) {
+    //                         if (itemObject[index].title.indexOf("(")) {
+    //                             singleItem = {
+    //                                 "todoItemName": itemObject[index].title.substring(itemObject[index].title.indexOf(":") + 2, itemObject[index].title.indexOf("(") - 1)
+    //                             }
+    //                             self.recentTodos.push(singleItem);
+    //                         }
+
+
+
+    //                     } else if (title.charAt(0) === "C" && title.indexOf("Comment") === 0) {
+    //                         singleItem = {
+    //                             "todoItemName": itemObject[index].title.substring(itemObject[index].title.lastIndexOf(":") + 2)
+    //                         }
+    //                         self.recentTodos.push(singleItem);
+    //                     }
+    //                 }
+    //             }
+    //         }
+    //     }
+    //     self.setRecentItemsToLocalStorage();
+    // }
     displayRecentData(response) {
         var self = this,
             itemObject = JSON.parse(response["_body"]).rss.channel.item,
@@ -184,31 +241,31 @@ export class TasksComponent implements OnInit {
 
         for (index = 0; index < itemObjectLength; index++) {
             if (itemObject[index]) {
-                var creator = itemObject[index]["dc:creator"],
-                    fname = itemObject[index]["dc:creator"].substring(0, itemObject[index]["dc:creator"].indexOf(" "));
-                singleItem = {};
-                //check to list data for the logged in user
-                if (this.getFnameFromLocalStorage() === fname) {
-                    if (itemObject[index].title) {
-                        title = itemObject[index].title;
-                        if (title.charAt(0) === "T" && title.indexOf("Todo") === 0) {
+                if (itemObject[index].title) {
+                    title = itemObject[index].title;
+                    if (title.charAt(0) === "T" && title.indexOf("Todo") === 0) {
+                        var assignee = itemObject[index].title.substring(itemObject[index].title.indexOf('(') + 1, itemObject[index].title.indexOf('responsible')),
+                            fname = assignee.substring(0, assignee.indexOf(" "));
+                        singleItem = {};
+                        if (this.getFnameFromLocalStorage() === fname) {
                             if (itemObject[index].title.indexOf("(")) {
                                 singleItem = {
                                     "todoItemName": itemObject[index].title.substring(itemObject[index].title.indexOf(":") + 2, itemObject[index].title.indexOf("(") - 1)
                                 }
                                 self.recentTodos.push(singleItem);
                             }
-
-
-
-                        } else if (title.charAt(0) === "C" && title.indexOf("Comment") === 0) {
-                            singleItem = {
-                                "todoItemName": itemObject[index].title.substring(itemObject[index].title.lastIndexOf(":") + 2)
-                            }
-                            self.recentTodos.push(singleItem);
                         }
+                    } else if (title.charAt(0) === "C" && title.indexOf("Comment") === 0) {
+                        var creator = itemObject[index]["dc:creator"],
+                            fname = itemObject[index]["dc:creator"].substring(0, itemObject[index]["dc:creator"].indexOf(" "));
+                        singleItem = {};
+                        singleItem = {
+                            "todoItemName": itemObject[index].title.substring(itemObject[index].title.lastIndexOf(":") + 2)
+                        }
+                        self.recentTodos.push(singleItem);
                     }
                 }
+
             }
         }
         self.setRecentItemsToLocalStorage();

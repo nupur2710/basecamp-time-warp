@@ -1391,6 +1391,7 @@ a.btn-show {
     position: absolute;
     right: 0;
     margin: 5px 0px 0px 0px;
+    z-index: 30000;
 }
 
 .table {
@@ -1536,6 +1537,17 @@ button[disabled] {
 
 .descending:after {
     content: '\25bc';
+}
+
+.details-control {
+    /*background: url('../../images/details_open.png') no-repeat center center;*/
+    cursor: pointer;
+    width: 20px;
+}
+
+.shown .details-control {
+    /*background: url('../../images/details_close.png') no-repeat center center;*/
+    width: 20px;
 }
 
 .expand-padding {
@@ -1882,6 +1894,67 @@ a.negative {
     height: 28px;
 }
 
+.modal-content {
+    display: none;
+    background: #fff;
+    width: 500px;
+    /* margin: 0 auto; */
+    position: absolute;
+    top: 70px;
+    left: 40%;
+    padding: 20px;
+    border: 1px solid #ccc;
+    z-index: 80000;
+}
+
+.close {
+    position: absolute;
+    top: 0px;
+    right: 0;
+    /* font-size: 50px; */
+    color: #95979c;
+    background: #fff;
+    cursor: pointer;
+    padding: 6px 10px 6px 6px;
+    display: none;
+}
+
+.modal-content.popup-show,
+.close.close-show {
+    display: block;
+}
+
+.task-form {
+    padding: 10px 0px 10px 0px;
+    border-bottom: 1px solid #ccc;
+    margin-bottom: 15px;
+}
+
+.filter-list .filter-grp-list {
+    position: relative;
+}
+
+.btn-show {
+    top: 20px;
+}
+
+.filter-grp-Head {
+    width: 90%;
+}
+
+@media screen and (max-width: 1300px) {
+    .modal-content {
+        left: 30%;
+    }
+}
+
+@media screen and (max-width: 750px) {
+    .modal-content {
+        width: 96%;
+        left: 2%;
+    }
+}
+
 .msg-header {
     font-size: 1.2em;
     line-height: 1em;
@@ -1953,36 +2026,36 @@ a.negative {
 /**
  * Calculates numbers to the mathmatical power (exponent)
  *
- * @since 1.0.0
+ * @since   1.0.0
  *
- * @param int   $number   The number to increase
- * @param int   $exponent The power to increase the number by
+ * @param   int     $number     The number to increase
+ * @param   int     $exponent   The power to increase the number by
  *
- * @return  int         The new number
+ * @return  int                 The new number
  */
 
 
 /**
  * Removes units from values for easier modification
  *
- * @since 1.0.0
+ * @since   1.0.0
  *
- * @param int   $number   The number to strip units from
+ * @param   int     $number     The number to strip units from
  *
- * @return  int         The number without the unit
+ * @return  int                 The number without the unit
  */
 
 
 /**
  * Calculates the line height based on multiple parameters
  *
- * @since 1.0.0
+ * @since   1.0.0
  *
- * @param int   $font-size      The font size
- * @param int   $content-width    The width of the content area
- * @param int   $ratio        The ratio. Default 1.61803398875 (golden ratio)
+ * @param   int     $font-size          The font size
+ * @param   int     $content-width      The width of the content area
+ * @param   int     $ratio              The ratio. Default 1.61803398875 (golden ratio)
  *
- * @return  int             The calculated line height
+ * @return  int                         The calculated line height
  */
 
 @media only screen and (max-width: 768px) {
@@ -2421,6 +2494,18 @@ a.negative {
 
 .zig-zag {
     margin-bottom: 12px !important;
+}
+
+.spiner-small {
+    /*background-image: url(../../images/spiner-small.gif);*/
+    background-repeat: no-repeat;
+    background-position: center center;
+}
+
+.spiner-big {
+    /*background-image: url(../../images/spiner-big.gif);*/
+    background-repeat: no-repeat;
+    background-position: center center;
 }
 
 .js-photomask-container {
@@ -3842,6 +3927,15 @@ html.no-flexbox .flex-align-item-stretch .card {
     left: -20px;
 }
 
+.banner {
+    width: 100%;
+    height: 100vh;
+    display: table;
+    /*background: url('../../images/lalit_5.jpg') no-repeat center/cover;*/
+    overflow: hidden;
+    text-align: center;
+}
+
 .banner p {
     color: #fff;
     font-size: 18px;
@@ -3918,6 +4012,11 @@ html.no-flexbox .flex-align-item-stretch .card {
     font: 900 5vmin/7vh cookie, cursive;
     text-shadow: .05em .05em orange;
     filter: invert(1);
+}
+
+.banner.banner-overlay {
+    /*background: rgba(0, 0, 0, .3) url('../../images/lalit_5.jpg') no-repeat center/cover; */
+    background-blend-mode: overlay;
 }
 
 .banner-overlay .overlay-wrap {

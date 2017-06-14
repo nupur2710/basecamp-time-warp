@@ -19,14 +19,16 @@
         "tsconfig": "tsconfig.json",
         "prefix": "app",
         "styles": [
-            "../node_modules/bootstrap/dist/css/bootstrap.min.css",
+            
             "styles.css",
             "../src/assets/stylesheets/css/base-v2.css",
             "../src/assets/stylesheets/css/framework.css",
             "../src/assets/stylesheets/css/jquery-ui.css"
         ],
         "scripts": [
-            "../node_modules/auth0-js/build/auth0.min.js"
+            "../node_modules/auth0-js/build/auth0.min.js",
+            "../node_modules/jquery/dist/jquery.min.js"
+
         ],
         "environmentSource": "environments/environment.ts",
         "environments": {

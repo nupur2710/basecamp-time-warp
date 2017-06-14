@@ -1,48 +1,97 @@
 <div class="container">
     <div class="row">
-        <div class="people" *ngIf=todos>
-            <br/>
-            <ul class="filter-list unstyled-listing" *ngFor="let item of finalTodoList">
-                <li class="filter-grp-list activity-list">
-                    <a href="javascript:void(0)" class="filter-grp-Head clearfix collapse">
-                        <span class="activity-name">Id: {{ item.id }}</span>
-                        <br>
-                        <span class="activity-name">Activity name: {{ item.name }}</span>
-                        <span href="#modal" class="btn-show popup-model" (click)="onEnterTime($event, item)">Enter time</span>
-                        <div class="clearfix"></div>
-                        <span class="card-description">CreatedBy : {{ item.createdBy }}</span>
-                        <br>
-                        <span class="card-description">Assigned To : {{ item.assignedTo }} </span>
-                        <br>
-                        <span class="card-description">Due Date : {{ item.dueDate }}</span>
-                    </a>
-                    <a (click)='viewTimeLogs($event)' style="cursor:pointer"> View time logs</a>
-                    <div class="collapse-data">
-                        <div class="card-info activities-card">
-                            <table class="table bordered-table">
-                                <thead class="table-header">
-                                    <tr class="table-row">
-                                        <th class="column-header">Date</th>
-                                        <th class="column-header">Person</th>
-                                        <th class="column-header">Time</th>
-                                        <th class="column-header">Description</th>
-                                    </tr>
-                                    <!-- table-row -->
-                                </thead>
-                                <!-- table-header -->
-                                <tbody class="table-body" *ngFor="let singleLog of item.finalTimeLogs">
-                                    <tr class="table-row">
-                                        <td class="column-division">{{singleLog.date}}</td>
-                                        <td class="column-division">{{singleLog.person}}</td>
-                                        <td class="column-division">{{singleLog.hours}}</td>
-                                        <td class="column-division">{{singleLog.description}}</td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </div>
+        <ul class="filter-list unstyled-listing" *ngFor="let item of finalTodoList">
+            <li class="filter-grp-list activity-list">
+                <a href="javascript:void(0)" class="filter-grp-Head clearfix collapse">
+                    <span class="activity-name">Id: {{ item.id }}</span>
+                    <br>
+                    <span class="activity-name">Activity name: {{ item.name }}</span>
+                    <span href="#modal" class="btn-show popup-model" (click)="onEnterTime($event, item)">Enter time</span>
+                    <div class="clearfix"></div>
+                    <span class="card-description">CreatedBy : {{ item.createdBy }}</span>
+                    <br>
+                    <span class="card-description">Assigned To : {{ item.assignedTo }} </span>
+                    <br>
+                    <span class="card-description">Due Date : {{ item.dueDate }}</span>
+                </a>
+                <a (click)='viewTimeLogs($event)' style="cursor:pointer"> View time logs</a>
+                <div class="collapse-data">
+                    <div class="card-info activities-card">
+                        <table class="table bordered-table">
+                            <thead class="table-header">
+                                <tr class="table-row">
+                                    <th class="column-header">Date</th>
+                                    <th class="column-header">Person</th>
+                                    <th class="column-header">Time</th>
+                                    <th class="column-header">Description</th>
+                                </tr>
+                                <!-- table-row -->
+                            </thead>
+                            <!-- table-header -->
+                            <tbody class="table-body" *ngFor="let singleLog of item.finalTimeLogs">
+                                <tr class="table-row">
+                                    <td class="column-division">{{singleLog.date}}</td>
+                                    <td class="column-division">{{singleLog.person}}</td>
+                                    <td class="column-division">{{singleLog.hours}}</td>
+                                    <td class="column-division">{{singleLog.description}}</td>
+                                </tr>
+                            </tbody>
+                        </table>
                     </div>
-                </li>
-            </ul>
+                </div>
+            </li>
+        </ul>
+    </div>
+    <div class="popup">
+        <div class="modal-content">
+            <div class="col col12">
+                <div class="segment">
+                    <br>
+                    <div class="message block-msg sucess">
+                        <h4 class="msg-header">Task added successfully</h4>
+                        <p class="msg-desc"></p>
+                    </div>
+                    <form id="normalform" class="form" (ngSubmit)="onSubmit(f)" #f="ngForm">
+                        <div class="form-header task-form">
+                            <h4 class="form-title">{{currentItem.name}}</h4>
+                        </div>
+                        <!--form-header-->
+                        <div class="form-body">
+                            <div class="row form-row">
+                                <div class="col col12">
+                                    <label class="label">Choose date</label>
+                                    <div class="input-with-icon">
+                                        <input type="text" id="datepicker" class="input-text" ngModel name="task-date" /><img class="ui-datepicker-trigger" src="https://jqueryui.com/resources/demos/datepicker/images/calendar.gif" alt="..." title="...">
+                                    </div>
+                                </div>
+                                <!-- fluidRow -->
+                            </div>
+                            <!--form-row-->
+                            <div class="form-row">
+                                <label class="label">Time</label>
+                                <input class="input-text" tabindex="1" id="task-time" name="task-time" type="number" required ngModel  />
+                            </div>
+                            <!--form-row-->
+                            <div class="form-row">
+                                <label class="label">Description</label>
+                                <input class="input-text" type="text" id="task-description" name="task-description" ngModel tabindex="2">
+                            </div>
+                            <!--form-row-->
+                            <div class="form-footer">
+                                <div class="form-row">
+                                    <button name="formSend" id="formSend" type="submit" class="btn btn-fill" >Add</button>
+                                    <button name="formcancel" id="formcancel" type="reset" class="btn btn-fill" (click)="onCancelClick($event)">Cancel</button>
+                                </div>
+                                <!--row-->
+                            </div>
+                            <!--form-footer-->
+                        </div>
+                    </form>
+                    <!--form-->
+                </div>
+                <!-- segment -->
+            </div>
         </div>
+        <span class="close" (click)="onCloseClick($event)">X</span>
     </div>
 </div>

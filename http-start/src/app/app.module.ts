@@ -14,7 +14,6 @@ import { AppComponent } from './app.component';
 import { AuthServerService } from './shared/auth-server.service';
 import { DataService } from './shared/data.service';
 import { NotificationComponent } from './notification/notification.component';
-import { HomeComponent } from './home/home.component';
 import { TasksComponent } from './tasks/tasks.component';
 import { EnterTimeComponent } from './enter-time/enter-time.component';
 import { LoginComponent } from './login/login.component';
@@ -24,8 +23,6 @@ import { UserDetailsComponent } from './user-details/user-details.component';
     declarations: [
         AppComponent,
         NotificationComponent,
-        
-        HomeComponent,
         TasksComponent,
         EnterTimeComponent,
         LoginComponent,
