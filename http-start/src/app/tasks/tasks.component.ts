@@ -20,11 +20,15 @@ export class TasksComponent implements OnInit {
     subscription: Subscription;
     finalTodoList: any[] = [];
     finalTimeLogs: any[] = [];
-    currentItem = {};
+    currentItem = {
+        "name": ""
+    };
     currentDate: string;
     @ViewChild('f') signupForm: NgForm;
 
     constructor(private serverService: AuthServerService, private route: ActivatedRoute, private dataService: DataService) {
+
+        this.currentItem.name = "";
         this.route
             .queryParams
             .subscribe(params => {
@@ -36,7 +40,7 @@ export class TasksComponent implements OnInit {
         this.todos = this.dataService.getTodos();
         this.onGetTasks();
         var date = new Date()
-        this.currentDate = date.getDate() + '/' +(date.getMonth() + 1) + '/' + date.getFullYear()
+        this.currentDate = date.getDate() + '/' + (date.getMonth() + 1) + '/' + date.getFullYear()
     }
 
     ngOnInit() {
@@ -58,7 +62,9 @@ export class TasksComponent implements OnInit {
     onCloseClick() {
         $('.modal-content').removeClass('popup-show');
         $('.close').toggleClass('close-show');
-        this.currentItem = {};
+        this.currentItem = {
+            "name": ""
+        };
     }
 
     hideSuccessMessage() {
@@ -132,7 +138,7 @@ export class TasksComponent implements OnInit {
                 todoItemArray = [];
 
             //get the list of todos
-            if (responseData && responseData["todo-lists"]["todo-list"]) {
+            if (responseData && responseData["todo-lists"] && responseData["todo-lists"]["todo-list"]) {
                 var todoItemsObject = {},
                     todoItemArray = [],
                     object = responseData["todo-lists"]["todo-list"],
@@ -212,45 +218,52 @@ export class TasksComponent implements OnInit {
     }
 
     getFnameFromLocalStorage() {
-        return JSON.parse(window.localStorage.getItem('userDetails'))['user-fname'];
+        debugger
+        if (window.localStorage.getItem('userDetails')) {
+            return JSON.parse(window.localStorage.getItem('userDetails'))['user-fname'];
+        }
+
     }
 
     displayRecentData(response) {
-        var self = this,
-            itemObject = JSON.parse(response["_body"]).rss.channel.item,
-            itemObjectLength = Object.keys(itemObject).length,
-            index, title, singleItem = {};
+        if (response["_body"]) {
+            var self = this,
+                itemObject = JSON.parse(response["_body"]).rss.channel.item,
+                itemObjectLength = Object.keys(itemObject).length,
+                index, title, singleItem = {};
 
-        for (index = 0; index < itemObjectLength; index++) {
-            if (itemObject[index]) {
-                if (itemObject[index].title) {
-                    title = itemObject[index].title;
-                    if (title.charAt(0) === "T" && title.indexOf("Todo") === 0) {
-                        var assignee = itemObject[index].title.substring(itemObject[index].title.indexOf('(') + 1, itemObject[index].title.indexOf('responsible')),
-                            fname = assignee.substring(0, assignee.indexOf(" "));
-                        singleItem = {};
-                        if (this.getFnameFromLocalStorage() === fname) {
-                            if (itemObject[index].title.indexOf("(")) {
-                                singleItem = {
-                                    "todoItemName": itemObject[index].title.substring(itemObject[index].title.indexOf(":") + 2, itemObject[index].title.indexOf("(") - 1)
+            for (index = 0; index < itemObjectLength; index++) {
+                if (itemObject[index]) {
+                    if (itemObject[index].title) {
+                        title = itemObject[index].title;
+                        if (title.charAt(0) === "T" && title.indexOf("Todo") === 0) {
+                            var assignee = itemObject[index].title.substring(itemObject[index].title.indexOf('(') + 1, itemObject[index].title.indexOf('responsible')),
+                                fname = assignee.substring(0, assignee.indexOf(" "));
+                            singleItem = {};
+                            if (this.getFnameFromLocalStorage() === fname) {
+                                if (itemObject[index].title.indexOf("(")) {
+                                    singleItem = {
+                                        "todoItemName": itemObject[index].title.substring(itemObject[index].title.indexOf(":") + 2, itemObject[index].title.indexOf("(") - 1)
+                                    }
+                                    self.recentTodos.push(singleItem);
                                 }
-                                self.recentTodos.push(singleItem);
                             }
+                        } else if (title.charAt(0) === "C" && title.indexOf("Comment") === 0) {
+                            var creator = itemObject[index]["dc:creator"],
+                                fname = itemObject[index]["dc:creator"].substring(0, itemObject[index]["dc:creator"].indexOf(" "));
+                            singleItem = {};
+                            singleItem = {
+                                "todoItemName": itemObject[index].title.substring(itemObject[index].title.lastIndexOf(":") + 2)
+                            }
+                            self.recentTodos.push(singleItem);
                         }
-                    } else if (title.charAt(0) === "C" && title.indexOf("Comment") === 0) {
-                        var creator = itemObject[index]["dc:creator"],
-                            fname = itemObject[index]["dc:creator"].substring(0, itemObject[index]["dc:creator"].indexOf(" "));
-                        singleItem = {};
-                        singleItem = {
-                            "todoItemName": itemObject[index].title.substring(itemObject[index].title.lastIndexOf(":") + 2)
-                        }
-                        self.recentTodos.push(singleItem);
                     }
-                }
 
+                }
             }
+            self.setRecentItemsToLocalStorage();
         }
-        self.setRecentItemsToLocalStorage();
+
     }
 
     setRecentItemsToLocalStorage() {
@@ -328,6 +341,7 @@ export class TasksComponent implements OnInit {
     }
 
     displayTimeLogs(response) {
+        debugger
         if (response) {
             var index,
                 responseData = response["_body"] ? JSON.parse(response["_body"]) : null,

@@ -14,12 +14,8 @@ export class LoginComponent implements OnInit {
     verificationCode;
     hasAuthenticationToken;
     constructor(private serverService: AuthServerService, private dataService: DataService) {
-
-
-    }
-
-    ngOnInit() {
         var self = this;
+      
         if (this.isLoggedIn()) {
             this.serverService.getUser()
                 .subscribe(
@@ -34,6 +30,11 @@ export class LoginComponent implements OnInit {
                     (error) => console.log(error)
                 );
         }
+
+    }
+
+    ngOnInit() {
+
 
     }
 

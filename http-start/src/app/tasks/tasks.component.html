@@ -80,7 +80,7 @@
                             <div class="form-footer">
                                 <div class="form-row">
                                     <button name="formSend" id="formSend" type="submit" class="btn btn-fill" >Add</button>
-                                    <button name="formcancel" id="formcancel" type="reset" class="btn btn-fill" (click)="onCancelClick($event)">Cancel</button>
+                                    <button name="formcancel" id="formcancel" type="reset" class="btn btn-fill" (click)="onCancelClick()">Cancel</button>
                                 </div>
                                 <!--row-->
                             </div>
@@ -92,6 +92,6 @@
                 <!-- segment -->
             </div>
         </div>
-        <span class="close" (click)="onCloseClick($event)">X</span>
+        <span class="close" (click)="onCloseClick()">X</span>
     </div>
 </div>
