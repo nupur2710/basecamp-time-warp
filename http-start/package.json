@@ -24,12 +24,15 @@
     "@angular/platform-server": "^4.0.0",
     "@angular/router": "^4.0.0",
     "@types/jquery": "^2.0.46",
+    "@types/underscore": "^1.8.1",
     "angular2-notifications": "^0.7.4",
     "bootstrap": "^3.3.7",
     "core-js": "^2.4.1",
     "jquery": "^3.2.1",
     "ng2-notifications": "^0.3.0",
     "rxjs": "^5.2.0",
+    "tsd": "^0.6.5",
+    "underscore": "^1.8.3",
     "zone.js": "^0.8.5"
   },
   "devDependencies": {

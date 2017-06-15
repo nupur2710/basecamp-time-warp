@@ -8,6 +8,7 @@ import { AuthServerService } from '../shared/auth-server.service';
 import { NgForm } from '@angular/forms';
 
 declare const $: JQueryStatic;
+declare const _: any;
 
 @Component({
     selector: 'app-tasks',
@@ -176,37 +177,14 @@ export class TasksComponent implements OnInit {
                             for (itemIndex = 0; itemIndex < todoItemArray.length; itemIndex++) {
                                 listItem = {};
                                 singleItem = todoItemArray[itemIndex][0];
+                                this.generateTodoAndFinalTodoArray(singleItem, todoItems, recentTodoItems);
 
-                                if (singleItem) {
-                                    listItem = {
-                                        "id": singleItem['id'],
-                                        "name": singleItem['content'],
-                                        "createdBy": singleItem['creator-name'],
-                                        "assignedTo": singleItem['responsible-party-name'],
-                                        "dueDate": singleItem['due-at'] || ""
 
-                                    };
-                                    todoItems.push(listItem);
-
-                                    if (this.checkForRecentComments(singleItem)) {
-                                        recentTodoItems.push(listItem);
-                                    }
-                                }
 
                             }
                         } else {
                             singleItem = todoItemsObject;
-                            listItem = {
-                                "name": singleItem['content'],
-                                "createdBy": singleItem['creator-name'],
-                                "assignedTo": singleItem['responsible-party-name'],
-                                "dueDate": singleItem['due-at'] || ""
-                            };
-                            todoItems.push(listItem);
-
-                            if (this.checkForRecentComments(singleItem)) {
-                                recentTodoItems.push(listItem);
-                            }
+                            this.generateTodoAndFinalTodoArray(singleItem, todoItems, recentTodoItems);
                         }
 
                     }
@@ -222,13 +200,49 @@ export class TasksComponent implements OnInit {
                     name: "No tasks assigned"
                 });
             }
-            self.finalTodoList = recentTodoItems;
-            self.dataService.addTodos(self.todos);
-            self.dataService.addRecentTodos(self.finalTodoList);
-            this.setAllTodosToLocalStorage();
+            //update the final list only if the newly fetched data has more todos then the currrently stored
+            if (recentTodoItems.length != self.finalTodoList.length) {
+                if (recentTodoItems.length > self.finalTodoList.length) {
+                    this.triggerEventsForNewlyActiveTodos(recentTodoItems, self.finalTodoList);
+                }
+                self.finalTodoList = recentTodoItems;
+                self.dataService.addTodos(self.todos);
+                self.dataService.addRecentTodos(self.finalTodoList);
+                self.setAllTodosToLocalStorage();
+            }
+
 
         }
     }
+
+    triggerEventsForNewlyActiveTodos(newTodoList, oldTodoList) {
+        debugger
+    }
+
+    generateTodoAndFinalTodoArray(singleItem, todoItems, recentTodoItems) {
+        if (singleItem) {
+            var listItem = {
+                "id": singleItem['id'],
+                "name": singleItem['content'],
+                "createdBy": singleItem['creator-name'],
+                "assignedTo": singleItem['responsible-party-name'],
+                "dueDate": singleItem['due-at'] || ""
+
+            };
+            todoItems.push(listItem);
+
+            if (this.checkForRecentComments(singleItem)) {
+                recentTodoItems.push(listItem);
+                // if (singleItem.newTodo) {
+                //     console.log("trigger event for new todo being added");
+                // } else if (singleItem.newcomment) {
+                //     console.log("trigger event for new comment being added");
+                // }
+
+            }
+        }
+    }
+
     setAllTodosToLocalStorage() {
         window.localStorage.setItem("allTodos", JSON.stringify(this.todos));
         window.localStorage.setItem("recentTodos", JSON.stringify(this.finalTodoList));
@@ -237,8 +251,10 @@ export class TasksComponent implements OnInit {
     checkForRecentComments(singleItem) {
         var today = new Date().toDateString();
         if (new Date(singleItem['commented-at']).toDateString() === today) {
+            singleItem.newComment = true;
             return true;
         } else if (new Date(singleItem['created-at']).toDateString() === today) {
+            singleItem.newTodo = true;
             return true;
         }
     }

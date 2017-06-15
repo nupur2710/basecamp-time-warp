@@ -42,7 +42,7 @@ export class DataService {
 
     addRecentTodos(todos) {
         this.recentTodos = todos;
-        this.todosUpdated.next(this.recentTodos);
+        this.recentTodosUpdated.next(this.recentTodos);
     }
 
     getRecentTodos(){

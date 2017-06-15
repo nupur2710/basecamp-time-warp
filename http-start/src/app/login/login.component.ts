@@ -15,17 +15,19 @@ export class LoginComponent implements OnInit {
     hasAuthenticationToken;
     constructor(private serverService: AuthServerService, private dataService: DataService) {
         var self = this;
-      
+
         if (this.isLoggedIn()) {
             this.serverService.getUser()
                 .subscribe(
                     function(response: Response) {
-                        var body = JSON.parse(response['_body']),
-                            fname = body.person['first-name'],
-                            lname = body.person['last-name'],
-                            personId = body.person['id'];
-                        self.setNameToLocalStorage(fname, personId);
-                        self.user = fname + " " + lname;
+                        if (response['_body']) {
+                            var body = JSON.parse(response['_body']),
+                                fname = body.person['first-name'],
+                                lname = body.person['last-name'],
+                                personId = body.person['id'];
+                            self.setNameToLocalStorage(fname, personId);
+                            self.user = fname + " " + lname;
+                        }
                     },
                     (error) => console.log(error)
                 );
