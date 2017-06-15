@@ -80,19 +80,6 @@ app.get('/me', function(req, res) {
     });
 });
 
-app.get('/rss', function(req, res) {
-    request({
-        url: url + '/feed/recent_items_rss',
-        headers: {
-            "Authorization": "Bearer " + req.query.accessToken
-        }
-    }, function(error, response, body) {
-        to_json(body, function(error, data) {
-            res.json(data);
-        });
-
-    });
-});
 
 app.get('/todoItems/timeEntries', function(req, res) {
 

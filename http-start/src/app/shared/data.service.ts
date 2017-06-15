@@ -7,13 +7,13 @@ import { Todo } from '../tasks/todo.model';
 @Injectable()
 export class DataService {
     nameOfUser = "";
-    todos = [];
-    code = "";
-    todosUpdated = new Subject < Todo[] > ();
     userNameUpdated = new Subject < string > ();
-    recentActivities = [];
+    code = "";
+    todos = [];
+    todosUpdated = new Subject < Todo[] > ();
     recentTodos = [];
-    recentComments = [];
+    recentTodosUpdated = new Subject < Todo[] > ();
+
 
     constructor(private http: Http) {
 
@@ -38,6 +38,15 @@ export class DataService {
     addTodos(todos) {
         this.todos = todos;
         this.todosUpdated.next(this.todos);
+    }
+
+    addRecentTodos(todos) {
+        this.recentTodos = todos;
+        this.todosUpdated.next(this.recentTodos);
+    }
+
+    getRecentTodos(){
+        return this.recentTodos;
     }
 
 
