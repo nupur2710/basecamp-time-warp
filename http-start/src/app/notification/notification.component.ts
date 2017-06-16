@@ -1,12 +1,10 @@
 import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
 
-// import { PushNotificationComponent } from 'ng2-notifications/ng2-notifications';
 import { DataService } from '../shared/data.service';
 import * as $ from 'jquery';
 import { Subscription } from 'rxjs/Subscription';
 
-// import { NotifyComponent } from "angular2-simple-notify/notifyComponent";
-// import { NotifyService } from "angular2-simple-notify/notifyService";
+
 declare var Notification: any;
 
 @Component({
@@ -75,11 +73,30 @@ export class NotificationComponent implements OnInit {
     }
 
     createTodoNotification(todos) {
-        this.createCommentNotification(todos);
+        var titleName = todos.name,
+            user = todos.assignedTo,
+            title = "Hi " + user + ", looks like you just added a new to-do item: " + titleName + ".",
+            options = {
+                body: "Do you need to add any time?",
+                icon: "http://icons.veryicon.com/256/Internet%20%26%20Web/Socialmedia/Basecamp.png"
+            };
+        this.createNotification(title, options);
     }
 
     createCommentNotification(todos) {
+        var titleName = todos.name,
+            user = todos.assignedTo,
+            title = "Hi " + user + ", looks like you just added a comment to: " + titleName + ".",
+            options = {
+                body: "Do you need to add any time?",
+                icon: "http://icons.veryicon.com/256/Internet%20%26%20Web/Socialmedia/Basecamp.png"
+            };
+        this.createNotification(title, options);
 
+
+    }
+
+    createNotification(title, options) {
         if (!("Notification" in window)) {
             alert("This browser does not support desktop notification");
         }
@@ -87,7 +104,7 @@ export class NotificationComponent implements OnInit {
         // Let's check whether notification permissions have already been granted
         else if (Notification.permission === "granted") {
             // If it's okay let's create a notification
-            var notification = new Notification("Hi there!");
+            var notification = new Notification(title, options);
         }
 
         // Otherwise, we need to ask the user for permission
@@ -99,7 +116,6 @@ export class NotificationComponent implements OnInit {
                 }
             });
         }
-
     }
 
 
