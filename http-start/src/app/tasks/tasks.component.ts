@@ -8,7 +8,7 @@ import { AuthServerService } from '../shared/auth-server.service';
 import { NgForm } from '@angular/forms';
 
 declare const $: JQueryStatic;
-declare const _: any;
+
 
 @Component({
     selector: 'app-tasks',
@@ -203,7 +203,7 @@ export class TasksComponent implements OnInit {
             //update the final list only if the newly fetched data has more todos then the currrently stored
             if (recentTodoItems.length != self.finalTodoList.length) {
                 if (recentTodoItems.length > self.finalTodoList.length) {
-                    this.triggerEventsForNewlyActiveTodos(recentTodoItems, self.finalTodoList);
+                    var newTodos = this.triggerEventsForNewlyActiveTodos(recentTodoItems, self.finalTodoList);
                 }
                 self.finalTodoList = recentTodoItems;
                 self.dataService.addTodos(self.todos);
@@ -216,22 +216,45 @@ export class TasksComponent implements OnInit {
     }
 
     triggerEventsForNewlyActiveTodos(newTodoList, oldTodoList) {
-        debugger
+        var diff = [],
+            isInArray;
+        for (var i = 0; i < newTodoList.length; i++) {
+            isInArray = false
+            for (var j = 0; j < oldTodoList.length; j++) {
+                if (JSON.stringify(newTodoList[i]) === JSON.stringify(oldTodoList[j])) {
+                    isInArray = true;
+                }
+
+            }
+            if (!isInArray) {
+                diff.push(newTodoList[i]);
+            }
+        }
+        for (i = 0; i < diff.length; i++) {
+            this.dataService.triggerEventForNotification(diff[i]);
+        }
+        return diff;
     }
 
     generateTodoAndFinalTodoArray(singleItem, todoItems, recentTodoItems) {
+
         if (singleItem) {
             var listItem = {
                 "id": singleItem['id'],
                 "name": singleItem['content'],
                 "createdBy": singleItem['creator-name'],
                 "assignedTo": singleItem['responsible-party-name'],
-                "dueDate": singleItem['due-at'] || ""
+                "dueDate": singleItem['due-at'] || "",
+                "newTodo": null,
+                "newComment": null,
+
 
             };
             todoItems.push(listItem);
 
             if (this.checkForRecentComments(singleItem)) {
+                listItem.newTodo = singleItem['newTodo'] || null;
+                listItem.newComment = singleItem['newComment'] || null;
                 recentTodoItems.push(listItem);
                 // if (singleItem.newTodo) {
                 //     console.log("trigger event for new todo being added");

@@ -4,12 +4,12 @@ import { FormsModule } from '@angular/forms';
 import { HttpModule } from '@angular/http';
 
 import { Routes, RouterModule } from '@angular/router';
-import { SimpleNotificationsModule } from 'angular2-notifications';
+
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 import { AppRoutingModule } from './app-routing.module';
 
-
+// import { PushNotificationComponent } from 'ng2-notifications/ng2-notifications';
 import { AppComponent } from './app.component';
 import { AuthServerService } from './shared/auth-server.service';
 import { DataService } from './shared/data.service';
@@ -26,7 +26,7 @@ import { UserDetailsComponent } from './user-details/user-details.component';
         TasksComponent,
         EnterTimeComponent,
         LoginComponent,
-        UserDetailsComponent
+        UserDetailsComponent       
     ],
     imports: [
         BrowserModule,
