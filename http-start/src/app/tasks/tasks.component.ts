@@ -25,6 +25,7 @@ export class TasksComponent implements OnInit {
         "name": ""
     };
     currentDate: string;
+    seenNotification: any[] = [];
     @ViewChild('f') signupForm: NgForm;
 
     constructor(private serverService: AuthServerService, private route: ActivatedRoute, private dataService: DataService) {
@@ -33,15 +34,18 @@ export class TasksComponent implements OnInit {
         this.route
             .queryParams
             .subscribe(params => {
-                this.dataService.code = params['accessToken'];
-                console.log("code: " + this.dataService.code);
+                self.dataService.code = params['accessToken'] || self.getAccessTokenToLocalStorage();
+                console.log("code: " + self.dataService.code);
+                if (self.dataService.code) {
+                    self.setAccessTokenToLocalStorage(self.dataService.code);
+                }
 
             });
-        this.setAccessTokenToLocalStorage(this.dataService.code);
-        this.todos = this.dataService.getTodos();
-        this.finalTodoList = this.dataService.getRecentTodos();
-        this.onGetTasks();
-        this.generateCurrentDateForForm();
+        self.onGetTasks();
+        self.todos = self.dataService.getTodos();
+        self.finalTodoList = self.dataService.getRecentTodos();
+
+        self.generateCurrentDateForForm();
         window.setInterval(function() {
             this.onGetTasks();
         }.bind(this), 6000);
@@ -61,7 +65,7 @@ export class TasksComponent implements OnInit {
         )
 
         this.subscription = this.dataService.notificationClicked.subscribe(
-            (todos) => {               
+            (todos) => {
                 this.onEnterTime(todos);
             }
         )
@@ -132,6 +136,11 @@ export class TasksComponent implements OnInit {
         localStorage.setItem("accessToken", token);
     }
 
+    getAccessTokenToLocalStorage() {
+        return localStorage.getItem("accessToken");
+    }
+
+
     onGetTasks() {
         var self = this;
         this.serverService.getTasks()
@@ -139,6 +148,7 @@ export class TasksComponent implements OnInit {
                 function(response: Response) {
                     self.displayTasks(response);
                     self.getTimeLogs();
+
                 },
                 (error) => console.log(error)
             );
@@ -221,24 +231,57 @@ export class TasksComponent implements OnInit {
     }
 
     triggerEventsForNewlyActiveTodos(newTodoList, oldTodoList) {
+
         var diff = [],
             isInArray;
-        for (var i = 0; i < newTodoList.length; i++) {
-            isInArray = false
-            for (var j = 0; j < oldTodoList.length; j++) {
-                if (JSON.stringify(newTodoList[i]) === JSON.stringify(oldTodoList[j])) {
-                    isInArray = true;
+        if (oldTodoList.length) {
+            for (var i = 0; i < newTodoList.length; i++) {
+                isInArray = false;
+                for (var j = 0; j < oldTodoList.length; j++) {
+                    if (JSON.stringify(newTodoList[i]) === JSON.stringify(oldTodoList[j])) {
+                        isInArray = true;
+                    }
+                }
+                if (!isInArray) {
+                    diff.push(newTodoList[i]);
+                }
+            }
+        } else {
+            diff = this.checkIfNotificationSeen();
+        }
+
+        for (i = 0; i < diff.length; i++) {
+            this.seenNotification.push(diff[i]['id']);
+            this.dataService.triggerEventForNotification(diff[i]);
+            this.setNotificationSeenFlag(this.seenNotification);
+        }
+        return diff;
+    }
+
+    setNotificationSeenFlag(seenNotification) {
+        window.localStorage.setItem("seenNotification", JSON.stringify(seenNotification));
+    }
+
+    checkIfNotificationSeen() {
+        var isSeen, showNotif = [];
+        if (window.localStorage.getItem("seenNotification")) {
+            var seen = JSON.parse(window.localStorage.getItem("seenNotification")),
+                recentTodos = JSON.parse(window.localStorage.getItem('recentTodos'));
+            for (var index = 0; index < recentTodos.length; index++) {
+                isSeen = false;
+                for (var seenIndex = 0; seenIndex < seen.length; seenIndex++) {
+                    if (seen[seenIndex] === recentTodos[index]['id']) {
+                        isSeen = true;
+                    }
+                }
+                if (!isSeen) {
+                    showNotif.push(recentTodos[index]);
                 }
 
             }
-            if (!isInArray) {
-                diff.push(newTodoList[i]);
-            }
+
         }
-        for (i = 0; i < diff.length; i++) {
-            this.dataService.triggerEventForNotification(diff[i]);
-        }
-        return diff;
+        return showNotif;
     }
 
     generateTodoAndFinalTodoArray(singleItem, todoItems, recentTodoItems) {
@@ -261,12 +304,6 @@ export class TasksComponent implements OnInit {
                 listItem.newTodo = singleItem['newTodo'] || null;
                 listItem.newComment = singleItem['newComment'] || null;
                 recentTodoItems.push(listItem);
-                // if (singleItem.newTodo) {
-                //     console.log("trigger event for new todo being added");
-                // } else if (singleItem.newcomment) {
-                //     console.log("trigger event for new comment being added");
-                // }
-
             }
         }
     }

@@ -61,7 +61,7 @@ export class DataService {
     }
 
     openEnterTimeForm(todos) {
-       this.notificationClicked.next(todos);
+        this.notificationClicked.next(todos);
     }
 
 

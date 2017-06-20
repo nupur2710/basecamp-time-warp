@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { DataService } from '../shared/data.service';
 import { Response } from '@angular/http';
 import { AuthServerService } from '../shared/auth-server.service';
-
+import { ActivatedRoute, Router } from '@angular/router';
 
 @Component({
     selector: 'app-login',
@@ -13,24 +13,35 @@ export class LoginComponent implements OnInit {
     user = "";
     verificationCode;
     hasAuthenticationToken;
-    constructor(private serverService: AuthServerService, private dataService: DataService) {
+    constructor(private serverService: AuthServerService, private dataService: DataService, private route: ActivatedRoute, private router: Router) {
         var self = this;
 
-        if (this.isLoggedIn()) {
-            this.serverService.getUser()
-                .subscribe(
-                    function(response: Response) {
-                        if (response['_body']) {
-                            var body = JSON.parse(response['_body']),
-                                fname = body.person['first-name'],
-                                lname = body.person['last-name'],
-                                personId = body.person['id'];
-                            self.setNameToLocalStorage(fname, personId);
-                            self.user = fname + " " + lname;
-                        }
-                    },
-                    (error) => console.log(error)
-                );
+        if (this.isLoggedIn()) {   
+            if (window.localStorage.getItem("userDetails")) {
+                var userDetails = JSON.parse(localStorage.getItem("userDetails"));
+                this.user = userDetails['user-fname'] + " " + userDetails['user-lname'];
+                this.router.navigate(['/tasks']);
+
+            } else {
+                this.serverService.getUser()
+                    .subscribe(
+                        function(response: Response) {
+                            if (response['_body']) {
+                                var body = JSON.parse(response['_body']);
+                                if (body.person) {
+                                    var fname = body.person['first-name'],
+                                        lname = body.person['last-name'],
+                                        personId = body.person['id'];
+                                    self.setNameToLocalStorage(fname, lname, personId);
+                                    self.user = fname + " " + lname;
+                                }
+
+                            }
+                        },
+                        (error) => console.log(error)
+                    );
+            }
+
         }
 
     }
@@ -40,9 +51,10 @@ export class LoginComponent implements OnInit {
 
     }
 
-    setNameToLocalStorage(fname, personId) {
+    setNameToLocalStorage(fname, lname, personId) {
         var userDetails = {
             "user-fname": fname,
+            "user-lname": lname,
             "person_id": personId
         }
         window.localStorage.setItem('userDetails', JSON.stringify(userDetails));
