@@ -30,7 +30,6 @@ export class NotificationComponent implements OnInit {
                 self.createTodoNotification(todos);
             },
             (error) => {
-
                 console.log(error);
             }
         )
@@ -40,37 +39,26 @@ export class NotificationComponent implements OnInit {
                 self.createCommentNotification(todos);
             },
             (error) => {
-
                 console.log(error);
             }
         )
 
     }
-    myShowFunction() {
-        //window.alert("i showed alert");
+    myShowFunction(event) {
+        event.preventDefault();
+        console.log(event)
+        window.alert("i opened alert");
     }
 
-    mycloseFunction() {
-        //window.alert("i closed alert");
-        debugger
+    mycloseFunction(event) {
+        console.log(event);
+        window.alert("i am show alert");
     }
 
-
-
-    myClickFunction(event) {
-        this.notificationCLicked = false;
-        console.log("bla");
-        //sets the focus on our application
-        window.focus();
-        //scroll to our time entering section
-
-        //load jquery for this
-        $('html, body').animate({
-            'scrollTop': $(".enter-time").position().top
-        });
-
-
+    onNotificationClicked(event, todos) {
+        this.dataService.openEnterTimeForm(todos);
     }
+
 
     createTodoNotification(todos) {
         var titleName = todos.name,
@@ -80,7 +68,7 @@ export class NotificationComponent implements OnInit {
                 body: "Do you need to add any time?",
                 icon: "http://icons.veryicon.com/256/Internet%20%26%20Web/Socialmedia/Basecamp.png"
             };
-        this.createNotification(title, options);
+        this.createNotification(title, options, todos);
     }
 
     createCommentNotification(todos) {
@@ -91,12 +79,13 @@ export class NotificationComponent implements OnInit {
                 body: "Do you need to add any time?",
                 icon: "http://icons.veryicon.com/256/Internet%20%26%20Web/Socialmedia/Basecamp.png"
             };
-        this.createNotification(title, options);
+        this.createNotification(title, options, todos);
 
 
     }
 
-    createNotification(title, options) {
+    createNotification(title, options, todos) {
+        var self = this;
         if (!("Notification" in window)) {
             alert("This browser does not support desktop notification");
         }
@@ -105,6 +94,11 @@ export class NotificationComponent implements OnInit {
         else if (Notification.permission === "granted") {
             // If it's okay let's create a notification
             var notification = new Notification(title, options);
+            notification.onclick = function() {
+                self.onNotificationClicked(event, todos);
+            };
+            // notification.onshow = this.mycloseFunction(event);
+
         }
 
         // Otherwise, we need to ask the user for permission
@@ -112,7 +106,7 @@ export class NotificationComponent implements OnInit {
             Notification.requestPermission(function(permission) {
                 // If the user accepts, let's create a notification
                 if (permission === "granted") {
-                    var notification = new Notification("Hi there!");
+                    var notification = new Notification(title, options);
                 }
             });
         }

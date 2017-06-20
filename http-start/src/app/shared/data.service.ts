@@ -16,6 +16,7 @@ export class DataService {
 
     newTodoAdded = new Subject < Todo[] > ();
     newCommentAdded = new Subject < Todo[] > ();
+    notificationClicked = new Subject < {} > ();
 
     constructor(private http: Http) {
 
@@ -47,17 +48,20 @@ export class DataService {
         this.recentTodosUpdated.next(this.recentTodos);
     }
 
-    getRecentTodos(){
+    getRecentTodos() {
         return this.recentTodos;
     }
 
-    triggerEventForNotification(todoItem){
-        debugger
-        if(todoItem.newTodo){
+    triggerEventForNotification(todoItem) {
+        if (todoItem.newTodo) {
             this.newTodoAdded.next(todoItem);
-        }else if(todoItem.newComment){
+        } else if (todoItem.newComment) {
             this.newCommentAdded.next(todoItem);
         }
+    }
+
+    openEnterTimeForm(todos) {
+       this.notificationClicked.next(todos);
     }
 
 

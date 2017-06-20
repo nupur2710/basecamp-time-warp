@@ -43,7 +43,6 @@ export class TasksComponent implements OnInit {
         this.onGetTasks();
         this.generateCurrentDateForForm();
         window.setInterval(function() {
-
             this.onGetTasks();
         }.bind(this), 6000);
     }
@@ -61,6 +60,12 @@ export class TasksComponent implements OnInit {
             }
         )
 
+        this.subscription = this.dataService.notificationClicked.subscribe(
+            (todos) => {               
+                this.onEnterTime(todos);
+            }
+        )
+
         this.todos = this.dataService.getTodos();
         this.finalTodoList = this.dataService.getRecentTodos();
     }
@@ -70,7 +75,7 @@ export class TasksComponent implements OnInit {
         this.currentDate = date.getDate() + '/' + (date.getMonth() + 1) + '/' + date.getFullYear()
     }
 
-    onEnterTime($event, item) {
+    onEnterTime(item) {
         $('.modal-content').toggleClass('popup-show');
         $('.close').toggleClass('close-show');
         this.hideSuccessMessage();
