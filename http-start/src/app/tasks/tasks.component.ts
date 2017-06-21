@@ -251,6 +251,7 @@ export class TasksComponent implements OnInit {
         }
 
         for (i = 0; i < diff.length; i++) {
+
             this.seenNotification.push(diff[i]['id']);
             this.dataService.triggerEventForNotification(diff[i]);
             this.setNotificationSeenFlag(this.seenNotification);
@@ -263,10 +264,12 @@ export class TasksComponent implements OnInit {
     }
 
     checkIfNotificationSeen() {
-        var isSeen, showNotif = [];
+        var isSeen, showNotif = [],
+            recentTodos = JSON.parse(window.localStorage.getItem('recentTodos'));
         if (window.localStorage.getItem("seenNotification")) {
-            var seen = JSON.parse(window.localStorage.getItem("seenNotification")),
-                recentTodos = JSON.parse(window.localStorage.getItem('recentTodos'));
+            var seen = JSON.parse(window.localStorage.getItem("seenNotification"));
+
+            this.seenNotification = seen;
             for (var index = 0; index < recentTodos.length; index++) {
                 isSeen = false;
                 for (var seenIndex = 0; seenIndex < seen.length; seenIndex++) {
@@ -280,6 +283,8 @@ export class TasksComponent implements OnInit {
 
             }
 
+        } else {
+            showNotif = recentTodos;
         }
         return showNotif;
     }
@@ -294,9 +299,7 @@ export class TasksComponent implements OnInit {
                 "assignedTo": singleItem['responsible-party-name'],
                 "dueDate": singleItem['due-at'] || "",
                 "newTodo": null,
-                "newComment": null,
-
-
+                "newComment": null
             };
             todoItems.push(listItem);
 
@@ -357,8 +360,8 @@ export class TasksComponent implements OnInit {
         if (response) {
             var index,
                 responseData = response["_body"] ? JSON.parse(response["_body"]) : null,
-                timeEntry, listItem, singleItem, timeLogs, finalTimeLogs = [];
-
+                timeEntry, listItem, singleItem, timeLogs, finalTimeLogs = [],
+                totalHours = 0;
             if (responseData && responseData['time-entries']) {
                 timeEntry = responseData['time-entries']['time-entry'];
                 if (timeEntry) {
@@ -378,6 +381,7 @@ export class TasksComponent implements OnInit {
                                     "description": singleItem['description']
                                 };
                                 finalTimeLogs.push(listItem);
+                                totalHours += Number(singleItem['hours']);
                             }
                         }
                     } else {
@@ -391,14 +395,18 @@ export class TasksComponent implements OnInit {
                                 "description": singleItem['description']
                             };
                             finalTimeLogs.push(listItem);
+                            totalHours += Number(singleItem['hours']);
                         }
                     }
 
                     for (index = 0; index < this.finalTodoList.length; index++) {
                         if (this.finalTodoList[index].id === singleItem['todo-item-id']) {
                             this.finalTodoList[index].finalTimeLogs = finalTimeLogs;
+                            debugger
+                             this.finalTodoList[index].totalHours = totalHours;
                         }
                     }
+                    totalHours = 0;
                 }
 
 

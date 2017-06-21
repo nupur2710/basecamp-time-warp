@@ -15,11 +15,11 @@
                     <span class="card-description">Due Date : {{ item.dueDate }}</span>
                 </a>
                 <a (click)='viewTimeLogs($event)' style="cursor:pointer"> View time logs</a>
-                <div class="collapse-data">
-                    <div class="card-info activities-card">
+                <div class="collapse-data" >
+                    <div class="card-info activities-card" *ngIf="item.finalTimeLogs">
                         <table class="table bordered-table">
                             <thead class="table-header">
-                                <tr class="table-row">
+                                <tr class="table-row" >
                                     <th class="column-header">Date</th>
                                     <th class="column-header">Person</th>
                                     <th class="column-header">Time</th>
@@ -28,12 +28,18 @@
                                 <!-- table-row -->
                             </thead>
                             <!-- table-header -->
-                            <tbody class="table-body" *ngFor="let singleLog of item.finalTimeLogs">
-                                <tr class="table-row">
+                            <tbody class="table-body" >
+                                <tr class="table-row" *ngFor="let singleLog of item.finalTimeLogs">
                                     <td class="column-division">{{singleLog.date}}</td>
                                     <td class="column-division">{{singleLog.person}}</td>
                                     <td class="column-division">{{singleLog.hours}}</td>
                                     <td class="column-division">{{singleLog.description}}</td>
+                                </tr>
+                                 <tr class="table-row" >
+                                    <td class="column-division"></td>
+                                    <td class="column-division">Total</td>
+                                    <td class="column-division">{{item.totalHours}}</td>
+                                    <td class="column-division"></td>
                                 </tr>
                             </tbody>
                         </table>
