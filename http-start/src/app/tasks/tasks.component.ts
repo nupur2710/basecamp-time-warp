@@ -43,7 +43,6 @@ export class TasksComponent implements OnInit {
                 if (self.dataService.code) {
                     self.setAccessTokenToLocalStorage(self.dataService.code);
                 }
-
             });
         self.onGetTasks();
         self.todos = self.dataService.getTodos();
@@ -76,15 +75,18 @@ export class TasksComponent implements OnInit {
 
         //get the event when Enter time form is to be displayed
         this.subscription = this.dataService.notificationClicked.subscribe(
-            (todos) => {
-                this.onEnterTime(todos);
-            }
-        )
-
+                (todos) => {
+                    this.onEnterTime(todos);
+                }
+            )
+            //get a list of all the todos assigned to the user
         this.todos = this.dataService.getTodos();
+        //get a list of the recently active todos assigned to the user
         this.finalTodoList = this.dataService.getRecentTodos();
     }
 
+
+    //generate today's date in dd/mm/yyyy format
     generateCurrentDateForForm() {
         var date = new Date();
         this.currentDate = date.getDate() + '/' + (date.getMonth() + 1) + '/' + date.getFullYear()
@@ -311,7 +313,6 @@ export class TasksComponent implements OnInit {
     }
 
     setNotificationSeenFlag(seenNotification) {
-        debugger
         window.localStorage.setItem("seenNotification", JSON.stringify(seenNotification));
     }
 
@@ -320,7 +321,6 @@ export class TasksComponent implements OnInit {
             recentTodos = JSON.parse(window.localStorage.getItem('recentTodos')),
             inRecent,
             index, seenIndex, seen;
-        debugger
         if (window.localStorage.getItem("seenNotification")) {
             seen = JSON.parse(window.localStorage.getItem("seenNotification"));
 
@@ -345,6 +345,7 @@ export class TasksComponent implements OnInit {
         return showNotif;
     }
 
+    //the final array that contains the recently active todos with the latest activity performed (if it was a new todo or commented todo)
     generateTodoAndFinalTodoArray(singleItem, todoItems, recentTodoItems) {
         if (singleItem) {
             var listItem = {
@@ -366,28 +367,30 @@ export class TasksComponent implements OnInit {
         }
     }
 
+
+    //set allTodos and recentTodos in local storage
     setAllTodosToLocalStorage() {
         window.localStorage.setItem("allTodos", JSON.stringify(this.todos));
         window.localStorage.setItem("recentTodos", JSON.stringify(this.finalTodoList));
     }
 
+    //check if any recent activity has been performed on the todo-item
     checkForRecentActivity(singleItem) {
         var today = new Date().toDateString();
+        //check if a comment has been made on the todo-item today
         if (new Date(singleItem['commented-at']).toDateString() === today) {
             singleItem.newComment = true;
             return true;
-        } else if (new Date(singleItem['created-at']).toDateString() === today) {
+        }
+
+        //check if the todo-item has been created today
+         else if (new Date(singleItem['created-at']).toDateString() === today) {
             singleItem.newTodo = true;
             return true;
         }
     }
 
-    getFnameFromLocalStorage() {
-        if (window.localStorage.getItem('userDetails')) {
-            return JSON.parse(window.localStorage.getItem('userDetails'))['user-fname'];
-        }
-    }
-
+    //the view time logs click event to display the generated logs
     viewTimeLogs($event) {
         if ($event.target.nextElementSibling.style.display === "block") {
             $event.target.nextElementSibling.style.display = "none";
@@ -397,6 +400,7 @@ export class TasksComponent implements OnInit {
         }
     }
 
+    //get the time logs for a single todo-item
     getTimeLogs() {
         var index, self = this;
         for (index = 0; index < this.finalTodoList.length; index++) {
@@ -422,7 +426,7 @@ export class TasksComponent implements OnInit {
                 timeEntry = responseData['time-entries']['time-entry'];
                 if (timeEntry) {
 
-                    //when there are multiple objects
+                    //when there are multiple time log objects
                     if (timeEntry.hasOwnProperty('0')) {
                         timeLogs = Object.keys(timeEntry).map(function(e) {
                             return [timeEntry[e]];
