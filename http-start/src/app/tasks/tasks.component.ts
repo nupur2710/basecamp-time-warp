@@ -28,6 +28,10 @@ export class TasksComponent implements OnInit {
     seenNotification: any[] = [];
     @ViewChild('f') signupForm: NgForm;
 
+
+    // subscribe to the accessToken being sent through the url on first login
+    // Get the list of tasks - All todos, Recent Todos
+    // Send the data to the shared service
     constructor(private serverService: AuthServerService, private route: ActivatedRoute, private dataService: DataService) {
         var self = this;
         this.currentItem.name = "";
@@ -45,25 +49,32 @@ export class TasksComponent implements OnInit {
         self.todos = self.dataService.getTodos();
         self.finalTodoList = self.dataService.getRecentTodos();
 
+        // Generate date for Enter time form
         self.generateCurrentDateForForm();
+
+        //Keep reading the new todos 
         window.setInterval(function() {
             this.onGetTasks();
         }.bind(this), 6000);
     }
 
+
     ngOnInit() {
+        //get the list of all todos
         this.subscription = this.dataService.todosUpdated.subscribe(
             (todos: Todo[]) => {
                 this.todos = todos;
             }
         )
 
+        //get the list of recent todos
         this.subscription = this.dataService.recentTodosUpdated.subscribe(
             (todos: Todo[]) => {
                 this.finalTodoList = todos;
             }
         )
 
+        //get the event when Enter time form is to be displayed
         this.subscription = this.dataService.notificationClicked.subscribe(
             (todos) => {
                 this.onEnterTime(todos);
@@ -79,35 +90,47 @@ export class TasksComponent implements OnInit {
         this.currentDate = date.getDate() + '/' + (date.getMonth() + 1) + '/' + date.getFullYear()
     }
 
+    //Click event for enter time button
     onEnterTime(item) {
         $('.modal-content').toggleClass('popup-show');
         $('.close').toggleClass('close-show');
+
+        //hide the above task added successfully button
         this.hideSuccessMessage();
+
+        //set the item corresponding to which, the time entry is to be made
         this.currentItem = item;
     }
 
+    //Event when Enter time form is closed
     onCloseClick() {
         $('.modal-content').removeClass('popup-show');
         $('.close').toggleClass('close-show');
+
+        //set the current item - To be displayed in the form empty
         this.currentItem = {
             "name": ""
         };
     }
 
+    //Hide success message initiallly while entering the time log
     hideSuccessMessage() {
         $("#normalform").css("display", "block");
         $(".block-msg.sucess").css("display", "none");
     }
 
+    // show success messsage after the time entry has been posted corresponding to the todo item
     showSuccessMessage() {
         $(".block-msg.sucess").css("display", "block");
         $("#normalform").css("display", "none");
     }
 
+    //On cancel button click
     onCancelClick() {
         this.onCloseClick();
     }
 
+    // Submit the enter time form entry
     onSubmit(f) {
         var data = {
             "time-entry": {
@@ -119,6 +142,7 @@ export class TasksComponent implements OnInit {
         };
         var self = this;
 
+        //Post the time entry to server
         this.serverService.postTimeEntries(this.currentItem, data).subscribe(
             function(response: Response) {
                 console.log(response);
@@ -131,22 +155,26 @@ export class TasksComponent implements OnInit {
     }
 
 
-
+    //set the accessToken received inside the local storage
     setAccessTokenToLocalStorage(token) {
         localStorage.setItem("accessToken", token);
     }
 
+    //return the stored local storage  - accessToken
     getAccessTokenToLocalStorage() {
         return localStorage.getItem("accessToken");
     }
 
-
+    //makes the request to get the all the todos
     onGetTasks() {
         var self = this;
         this.serverService.getTasks()
             .subscribe(
                 function(response: Response) {
+                    //display the received time logs in the template
                     self.displayTasks(response);
+
+                    // get the time logs corresponding to the recent todo items
                     self.getTimeLogs();
 
                 },
@@ -225,11 +253,34 @@ export class TasksComponent implements OnInit {
                 self.dataService.addRecentTodos(self.finalTodoList);
                 self.setAllTodosToLocalStorage();
             }
+        }
 
+        this.updateSeenNotificationArray();
+    }
 
+    updateSeenNotificationArray() {
+        var newTodoList = this.finalTodoList,
+            seenIndex,
+            index,
+            seen = JSON.parse(window.localStorage.getItem("seenNotification")),
+            inRecent;
+        this.seenNotification = [];
+        for (index = 0; index < newTodoList.length; index++) {
+            inRecent = false;
+            if (seen) {
+                for (seenIndex = 0; seenIndex < seen.length; seenIndex++) {
+                    if (seen[seenIndex] === newTodoList[index]['id']) {
+                        inRecent = true;
+                    }
+                }
+            }
+            if (!inRecent) {
+                this.seenNotification.push(newTodoList[index]['id']);
+            }
         }
     }
 
+    // get the new todos being added to the recent todos
     triggerEventsForNewlyActiveTodos(newTodoList, oldTodoList) {
 
         var diff = [],
@@ -247,7 +298,7 @@ export class TasksComponent implements OnInit {
                 }
             }
         } else {
-            diff = this.checkIfNotificationSeen();
+            diff = this.checkIfNotificationSeen(newTodoList);
         }
 
         for (i = 0; i < diff.length; i++) {
@@ -260,37 +311,41 @@ export class TasksComponent implements OnInit {
     }
 
     setNotificationSeenFlag(seenNotification) {
+        debugger
         window.localStorage.setItem("seenNotification", JSON.stringify(seenNotification));
     }
 
-    checkIfNotificationSeen() {
+    checkIfNotificationSeen(newTodoList) {
         var isSeen, showNotif = [],
-            recentTodos = JSON.parse(window.localStorage.getItem('recentTodos'));
+            recentTodos = JSON.parse(window.localStorage.getItem('recentTodos')),
+            inRecent,
+            index, seenIndex, seen;
+        debugger
         if (window.localStorage.getItem("seenNotification")) {
-            var seen = JSON.parse(window.localStorage.getItem("seenNotification"));
+            seen = JSON.parse(window.localStorage.getItem("seenNotification"));
 
             this.seenNotification = seen;
-            for (var index = 0; index < recentTodos.length; index++) {
+            for (index = 0; index < recentTodos.length; index++) {
                 isSeen = false;
-                for (var seenIndex = 0; seenIndex < seen.length; seenIndex++) {
+
+                for (seenIndex = 0; seenIndex < seen.length; seenIndex++) {
                     if (seen[seenIndex] === recentTodos[index]['id']) {
                         isSeen = true;
                     }
                 }
+
                 if (!isSeen) {
                     showNotif.push(recentTodos[index]);
                 }
-
             }
-
         } else {
-            showNotif = recentTodos;
+            showNotif = newTodoList;
         }
+
         return showNotif;
     }
 
     generateTodoAndFinalTodoArray(singleItem, todoItems, recentTodoItems) {
-
         if (singleItem) {
             var listItem = {
                 "id": singleItem['id'],
@@ -303,7 +358,7 @@ export class TasksComponent implements OnInit {
             };
             todoItems.push(listItem);
 
-            if (this.checkForRecentComments(singleItem)) {
+            if (this.checkForRecentActivity(singleItem)) {
                 listItem.newTodo = singleItem['newTodo'] || null;
                 listItem.newComment = singleItem['newComment'] || null;
                 recentTodoItems.push(listItem);
@@ -316,7 +371,7 @@ export class TasksComponent implements OnInit {
         window.localStorage.setItem("recentTodos", JSON.stringify(this.finalTodoList));
     }
 
-    checkForRecentComments(singleItem) {
+    checkForRecentActivity(singleItem) {
         var today = new Date().toDateString();
         if (new Date(singleItem['commented-at']).toDateString() === today) {
             singleItem.newComment = true;
@@ -356,6 +411,7 @@ export class TasksComponent implements OnInit {
 
     }
 
+    //generate the array for time logs for all the todo-items
     displayTimeLogs(response) {
         if (response) {
             var index,
@@ -365,6 +421,8 @@ export class TasksComponent implements OnInit {
             if (responseData && responseData['time-entries']) {
                 timeEntry = responseData['time-entries']['time-entry'];
                 if (timeEntry) {
+
+                    //when there are multiple objects
                     if (timeEntry.hasOwnProperty('0')) {
                         timeLogs = Object.keys(timeEntry).map(function(e) {
                             return [timeEntry[e]];
@@ -384,7 +442,9 @@ export class TasksComponent implements OnInit {
                                 totalHours += Number(singleItem['hours']);
                             }
                         }
-                    } else {
+                    }
+                    //when there is a single time entry
+                    else {
                         singleItem = timeEntry;
 
                         if (singleItem) {
@@ -402,16 +462,12 @@ export class TasksComponent implements OnInit {
                     for (index = 0; index < this.finalTodoList.length; index++) {
                         if (this.finalTodoList[index].id === singleItem['todo-item-id']) {
                             this.finalTodoList[index].finalTimeLogs = finalTimeLogs;
-                            debugger
-                             this.finalTodoList[index].totalHours = totalHours;
+                            this.finalTodoList[index].totalHours = totalHours;
                         }
                     }
                     totalHours = 0;
                 }
-
-
             }
-
         }
     }
 
