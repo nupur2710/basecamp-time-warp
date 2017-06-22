@@ -178,7 +178,6 @@ export class TasksComponent implements OnInit {
 
                     // get the time logs corresponding to the recent todo items
                     self.getTimeLogs();
-
                 },
                 (error) => console.log(error)
             );
@@ -312,10 +311,13 @@ export class TasksComponent implements OnInit {
         return diff;
     }
 
+
+    //set the seenNotification todos array in local storage
     setNotificationSeenFlag(seenNotification) {
         window.localStorage.setItem("seenNotification", JSON.stringify(seenNotification));
     }
 
+    //check if the notification for this active has been shown or not. If not, send that todo to give a notification
     checkIfNotificationSeen(newTodoList) {
         var isSeen, showNotif = [],
             recentTodos = JSON.parse(window.localStorage.getItem('recentTodos')),
