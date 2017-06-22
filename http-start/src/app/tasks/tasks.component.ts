@@ -27,7 +27,7 @@ export class TasksComponent implements OnInit {
     currentDate: string;
     seenNotification: any[] = [];
     @ViewChild('f') signupForm: NgForm;
-    
+
     // subscribe to the accessToken being sent through the url on first login
     // Get the list of tasks - All todos, Recent Todos
     // Send the data to the shared service
@@ -290,7 +290,7 @@ export class TasksComponent implements OnInit {
             for (var i = 0; i < newTodoList.length; i++) {
                 isInArray = false;
                 for (var j = 0; j < oldTodoList.length; j++) {
-                    if (JSON.stringify(newTodoList[i]) === JSON.stringify(oldTodoList[j])) {
+                    if (newTodoList[i]['id'] === oldTodoList[j]['id']) {
                         isInArray = true;
                     }
                 }
