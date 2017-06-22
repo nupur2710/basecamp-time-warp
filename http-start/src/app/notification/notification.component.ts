@@ -18,6 +18,7 @@ export class NotificationComponent implements OnInit {
     notificationCLicked = true;
     subscription: Subscription;
     currentNotification = {};
+    notification;
 
     constructor(private dataService: DataService) {
 
@@ -44,18 +45,11 @@ export class NotificationComponent implements OnInit {
         )
 
     }
-    myShowFunction(event) {
-        event.preventDefault();
-        console.log(event)
-        window.alert("i opened alert");
-    }
 
-    mycloseFunction(event) {
-        console.log(event);
-        window.alert("i am show alert");
-    }
+
 
     onNotificationClicked(event, todos) {
+        this.notification.close();
         this.dataService.openEnterTimeForm(todos);
     }
 
@@ -85,7 +79,6 @@ export class NotificationComponent implements OnInit {
     }
 
     createNotification(title, options, todos) {
-        var self = this;
         if (!("Notification" in window)) {
             alert("This browser does not support desktop notification");
         }
@@ -93,10 +86,7 @@ export class NotificationComponent implements OnInit {
         // Let's check whether notification permissions have already been granted
         else if (Notification.permission === "granted") {
             // If it's okay let's create a notification
-            var notification = new Notification(title, options);
-            notification.onclick = function() {
-                self.onNotificationClicked(event, todos);
-            };
+            this.createNotificationObject(title, options, todos);
             // notification.onshow = this.mycloseFunction(event);
 
         }
@@ -106,10 +96,18 @@ export class NotificationComponent implements OnInit {
             Notification.requestPermission(function(permission) {
                 // If the user accepts, let's create a notification
                 if (permission === "granted") {
-                    var notification = new Notification(title, options);
+                    this.createNotificationObject(title, options, todos);
                 }
             });
         }
+    }
+
+    createNotificationObject(title, options, todos) {
+        var self = this;
+        this.notification = new Notification(title, options);
+        this.notification.onclick = function() {
+            self.onNotificationClicked(event, todos);
+        };
     }
 
 
