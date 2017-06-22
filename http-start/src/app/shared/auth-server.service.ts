@@ -6,7 +6,7 @@ import 'rxjs/Rx';
 
 @Injectable()
 export class AuthServerService {
-    //baseUrl = "http://192.168.0.175:3001/"
+   // baseUrl = "http://192.168.0.175:3001/"
 
     baseUrl = "http://127.0.0.1:3001/";
     constructor(private http: Http, private route: ActivatedRoute) {

@@ -41,7 +41,7 @@ app.get("/auth/basecamp", function(req, res, next) {
         // prod link http://192.168.0.175:8010/timewrap/tasks?accessToken=
 
         //local link http://127.0.0.1:4200/timewarp?accessToken=
-        return res.redirect('http://127.0.0.1:4200/tasks?accessToken=' + accessToken);
+        return res.redirect('http://127.0.0.1:4200/timewarp?accessToken=' + accessToken);
     });
 
 });
@@ -100,7 +100,6 @@ app.get('/todoItems/timeEntries', function(req, res) {
 
 app.get('/todoItems/makeTimeEntries', function(req, res) {
     var data = jsonxml(req.query.data);
-    console.log(data);
     request.post({
         url: url + '/todo_items/' + req.query.itemId + '/time_entries.xml',
         headers: {

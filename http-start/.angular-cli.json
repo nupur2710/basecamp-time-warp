@@ -19,16 +19,16 @@
         "tsconfig": "tsconfig.json",
         "prefix": "app",
         "styles": [
-            
+
             "styles.css",
             "../src/assets/stylesheets/css/base-v2.css",
             "../src/assets/stylesheets/css/framework.css",
             "../src/assets/stylesheets/css/jquery-ui.css"
         ],
         "scripts": [
-            "../node_modules/auth0-js/build/auth0.min.js",
             "../node_modules/jquery/dist/jquery.min.js",
-            "../node_modules/underscore/underscore.js"
+            "../src/assets/js/jquery-ui.js",
+            "../src/assets/js/datepicker.js"
 
         ],
         "environmentSource": "environments/environment.ts",

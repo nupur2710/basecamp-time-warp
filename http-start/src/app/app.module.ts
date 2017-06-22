@@ -2,6 +2,7 @@ import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { HttpModule } from '@angular/http';
+import { DatePickerModule } from 'ng2-datepicker';
 
 import { Routes, RouterModule } from '@angular/router';
 
@@ -33,7 +34,8 @@ import { UserDetailsComponent } from './user-details/user-details.component';
         FormsModule,
         HttpModule,
         BrowserAnimationsModule,
-        AppRoutingModule
+        AppRoutingModule,
+        DatePickerModule
     ],
     providers: [AuthServerService, DataService],
     bootstrap: [AppComponent]

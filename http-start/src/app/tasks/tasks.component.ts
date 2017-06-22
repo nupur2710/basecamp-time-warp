@@ -6,6 +6,7 @@ import { Response } from '@angular/http';
 import { ActivatedRoute, Params } from '@angular/router';
 import { AuthServerService } from '../shared/auth-server.service';
 import { NgForm } from '@angular/forms';
+import { DatePickerOptions, DateModel } from 'ng2-datepicker';
 
 declare const $: JQueryStatic;
 
@@ -27,13 +28,14 @@ export class TasksComponent implements OnInit {
     currentDate: string;
     seenNotification: any[] = [];
     @ViewChild('f') signupForm: NgForm;
-
-
+    date: DateModel;
+    options: DatePickerOptions;
     // subscribe to the accessToken being sent through the url on first login
     // Get the list of tasks - All todos, Recent Todos
     // Send the data to the shared service
     constructor(private serverService: AuthServerService, private route: ActivatedRoute, private dataService: DataService) {
         var self = this;
+        this.options = new DatePickerOptions();
         this.currentItem.name = "";
         this.route
             .queryParams
@@ -386,7 +388,7 @@ export class TasksComponent implements OnInit {
         }
 
         //check if the todo-item has been created today
-         else if (new Date(singleItem['created-at']).toDateString() === today) {
+        else if (new Date(singleItem['created-at']).toDateString() === today) {
             singleItem.newTodo = true;
             return true;
         }
