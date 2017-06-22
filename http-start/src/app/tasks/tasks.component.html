@@ -15,11 +15,11 @@
                     <span class="card-description">Due Date : {{ item.dueDate }}</span>
                 </a>
                 <a (click)='viewTimeLogs($event)' style="cursor:pointer"> View time logs</a>
-                <div class="collapse-data" >
+                <div class="collapse-data">
                     <div class="card-info activities-card" *ngIf="item.finalTimeLogs">
                         <table class="table bordered-table">
                             <thead class="table-header">
-                                <tr class="table-row" >
+                                <tr class="table-row">
                                     <th class="column-header">Date</th>
                                     <th class="column-header">Person</th>
                                     <th class="column-header">Time</th>
@@ -28,14 +28,14 @@
                                 <!-- table-row -->
                             </thead>
                             <!-- table-header -->
-                            <tbody class="table-body" >
+                            <tbody class="table-body">
                                 <tr class="table-row" *ngFor="let singleLog of item.finalTimeLogs">
                                     <td class="column-division">{{singleLog.date}}</td>
                                     <td class="column-division">{{singleLog.person}}</td>
                                     <td class="column-division">{{singleLog.hours}}</td>
                                     <td class="column-division">{{singleLog.description}}</td>
                                 </tr>
-                                 <tr class="table-row" >
+                                <tr class="table-row">
                                     <td class="column-division"></td>
                                     <td class="column-division">Total</td>
                                     <td class="column-division">{{item.totalHours}}</td>
@@ -48,8 +48,6 @@
             </li>
         </ul>
     </div>
-     <ng2-datepicker [options]="options" [(ngModel)]="date"></ng2-datepicker>
-  
     <div class="popup">
         <div class="modal-content">
             <div class="col col12">
@@ -69,7 +67,7 @@
                                 <div class="col col12">
                                     <label class="label">Choose date</label>
                                     <div class="input-with-icon">
-                                        <input type="text" id="datepicker" class="input-text" ngModel name="task-date" [(ngModel)]="currentDate"/><img class="ui-datepicker-trigger" src="https://jqueryui.com/resources/demos/datepicker/images/calendar.gif" alt="..." title="...">
+                                        <input type="text" id="datepicker" class="input-text" ngModel name="datepicker" [(ngModel)]="currentDate" /><img class="ui-datepicker-trigger" src="https://jqueryui.com/resources/demos/datepicker/images/calendar.gif" alt="..." title="...">
                                     </div>
                                 </div>
                                 <!-- fluidRow -->
@@ -77,7 +75,7 @@
                             <!--form-row-->
                             <div class="form-row">
                                 <label class="label">Time</label>
-                                <input class="input-text" tabindex="1" id="task-time" name="task-time" type="number" required ngModel  />
+                                <input class="input-text" tabindex="1" id="task-time" name="task-time" type="number" required ngModel />
                             </div>
                             <!--form-row-->
                             <div class="form-row">
@@ -87,7 +85,7 @@
                             <!--form-row-->
                             <div class="form-footer">
                                 <div class="form-row">
-                                    <button name="formSend" id="formSend" type="submit" class="btn btn-fill" >Add</button>
+                                    <button name="formSend" id="formSend" type="submit" class="btn btn-fill">Add</button>
                                     <button name="formcancel" id="formcancel" type="reset" class="btn btn-fill" (click)="onCancelClick()">Cancel</button>
                                 </div>
                                 <!--row-->
@@ -103,5 +101,4 @@
         <span class="close" (click)="onCloseClick()">X</span>
     </div>
 </div>
-
 <app-notification></app-notification>

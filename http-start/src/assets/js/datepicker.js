@@ -27,7 +27,7 @@ jQuery(function() {
         buttonText: "Select date"
     });
 
-    var dateFormat = "mm/dd/yy",
+    var dateFormat = "dd/mm/yy",
         from = $("#from")
         .datepicker({
             defaultDate: "+1w",

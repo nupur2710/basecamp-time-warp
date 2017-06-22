@@ -6,7 +6,6 @@ import { Response } from '@angular/http';
 import { ActivatedRoute, Params } from '@angular/router';
 import { AuthServerService } from '../shared/auth-server.service';
 import { NgForm } from '@angular/forms';
-import { DatePickerOptions, DateModel } from 'ng2-datepicker';
 
 declare const $: JQueryStatic;
 
@@ -28,14 +27,12 @@ export class TasksComponent implements OnInit {
     currentDate: string;
     seenNotification: any[] = [];
     @ViewChild('f') signupForm: NgForm;
-    date: DateModel;
-    options: DatePickerOptions;
+    
     // subscribe to the accessToken being sent through the url on first login
     // Get the list of tasks - All todos, Recent Todos
     // Send the data to the shared service
     constructor(private serverService: AuthServerService, private route: ActivatedRoute, private dataService: DataService) {
         var self = this;
-        this.options = new DatePickerOptions();
         this.currentItem.name = "";
         this.route
             .queryParams
@@ -51,7 +48,7 @@ export class TasksComponent implements OnInit {
         self.finalTodoList = self.dataService.getRecentTodos();
 
         // Generate date for Enter time form
-        self.generateCurrentDateForForm();
+        // self.generateCurrentDateForForm();
 
         //Keep reading the new todos 
         window.setInterval(function() {
@@ -136,10 +133,11 @@ export class TasksComponent implements OnInit {
 
     // Submit the enter time form entry
     onSubmit(f) {
+        debugger
         var data = {
             "time-entry": {
                 "person-id": JSON.parse(localStorage.getItem('userDetails'))['person_id'],
-                "date": f.value['task-date'],
+                "date": $("#datepicker").val(),
                 "hours": f.value['task-time'],
                 "description": f.value['task-description']
             }
