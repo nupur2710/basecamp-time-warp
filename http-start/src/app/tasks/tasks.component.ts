@@ -6,6 +6,7 @@ import { Response } from '@angular/http';
 import { ActivatedRoute, Params } from '@angular/router';
 import { AuthServerService } from '../shared/auth-server.service';
 import { NgForm } from '@angular/forms';
+import { Observable } from 'rxjs/Observable';
 
 declare const $: JQueryStatic;
 
@@ -27,7 +28,8 @@ export class TasksComponent implements OnInit {
     currentDate: string;
     seenNotification: any[] = [];
     @ViewChild('f') signupForm: NgForm;
-    descriptionSource:any[] = [];
+    descriptionSource: any[] = [];
+    allTodoIds: any[] = [];
 
     // subscribe to the accessToken being sent through the url on first login
     // Get the list of tasks - All todos, Recent Todos
@@ -45,13 +47,20 @@ export class TasksComponent implements OnInit {
                 }
             });
         self.onGetTasks();
+        self.getTimeEntriesDecription();
         self.todos = self.dataService.getTodos();
         self.finalTodoList = self.dataService.getRecentTodos();
 
         //Keep reading the new todos 
         window.setInterval(function() {
             this.onGetTasks();
+
         }.bind(this), 6000);
+
+        //Keep reading the time entries for all todos
+        window.setInterval(function() {
+            this.getTimeEntriesDecription();
+        }.bind(this), 600000);
     }
 
 
@@ -60,6 +69,7 @@ export class TasksComponent implements OnInit {
         this.subscription = this.dataService.todosUpdated.subscribe(
             (todos: Todo[]) => {
                 this.todos = todos;
+                console.log(todos);
             }
         )
 
@@ -82,6 +92,54 @@ export class TasksComponent implements OnInit {
         this.finalTodoList = this.dataService.getRecentTodos();
     }
 
+    getTimeEntriesDecription() {
+        var index, self = this;
+        console.log("get time entries description");
+        let itemIdArray = this.getAllTodoIdsToLocalStorage(),
+            timeEntryRequestArray = [];
+            if(itemIdArray.length){
+                for (index = 0; index < itemIdArray.length; index++) {
+            timeEntryRequestArray.push(this.serverService.getTimeEntriesForSingleTodoItem(itemIdArray[index]));
+        }
+        Observable.forkJoin(timeEntryRequestArray).subscribe(
+            (results) => {
+                self.populateDescriptionSourceOfTimeEntry(results);
+            }
+        );
+            }
+        
+
+    }
+
+    populateDescriptionSourceOfTimeEntry(results) {
+        this.descriptionSource = [];
+        var timeEntry, timeEntryArray;
+        for (var index = 0; index < results.length; index++) {
+            if (JSON.parse(results[index]['_body'])['time-entries']['time-entry']) {
+                timeEntry = JSON.parse(results[index]['_body'])['time-entries']['time-entry'];
+                if (timeEntry.hasOwnProperty('0')) {
+                    timeEntryArray = Object.keys(timeEntry).map(function(e) {
+                        return [timeEntry[e]];
+                    });
+                    for (var itemIndex = 0; itemIndex < timeEntryArray.length; itemIndex++) {
+                        this.descriptionSource.push(timeEntryArray[itemIndex][0]['description']);
+                    }
+                } else {
+                    this.descriptionSource.push(timeEntry['description']);
+                }
+            }
+        }
+        this.setDescriptionSourceToLocalStorage();
+    }
+
+    setDescriptionSourceToLocalStorage() {
+        console.log(this.descriptionSource);
+        window.localStorage.setItem("descriptionSource", JSON.stringify(this.descriptionSource));
+    }
+
+    getDescriptionSourceFromLocalStorage() {
+        return JSON.parse(window.localStorage.getItem("descriptionSource"));
+    }
     //Click event for enter time button
     onEnterTime(item) {
         $('.modal-content').toggleClass('popup-show');
@@ -124,7 +182,6 @@ export class TasksComponent implements OnInit {
 
     // Submit the enter time form entry
     onSubmit(f) {
-        debugger
         var data = {
             "time-entry": {
                 "person-id": JSON.parse(localStorage.getItem('userDetails'))['person_id'],
@@ -175,6 +232,7 @@ export class TasksComponent implements OnInit {
     }
 
     displayTasks(response) {
+
         if (response) {
             var listIndex, itemIndex,
                 self = this,
@@ -188,7 +246,9 @@ export class TasksComponent implements OnInit {
                 dueDate = [],
                 todoItemsObject = {},
                 todoItemArray = [],
-                recentTodoItems = [];
+                recentTodoItems = [],
+                todoItemsId;
+            this.allTodoIds = [];
 
             //get the list of todos
             if (responseData && responseData["todo-lists"] && responseData["todo-lists"]["todo-list"]) {
@@ -204,6 +264,7 @@ export class TasksComponent implements OnInit {
                     //get the list of todo items inside todos
                     if (todoList[0][0]['todo-items']['todo-item']) {
                         todoItems = [];
+                        todoItemsId = [];
                         todoItemsObject = todoList[listIndex][0]['todo-items']['todo-item'];
                         if (todoItemsObject.hasOwnProperty('0')) {
                             todoItemArray = Object.keys(todoItemsObject).map(function(e) {
@@ -212,14 +273,12 @@ export class TasksComponent implements OnInit {
                             for (itemIndex = 0; itemIndex < todoItemArray.length; itemIndex++) {
                                 listItem = {};
                                 singleItem = todoItemArray[itemIndex][0];
-                                this.generateTodoAndFinalTodoArray(singleItem, todoItems, recentTodoItems);
-
-
+                                this.generateTodoAndFinalTodoArray(singleItem, todoItems, recentTodoItems, todoItemsId);
 
                             }
                         } else {
                             singleItem = todoItemsObject;
-                            this.generateTodoAndFinalTodoArray(singleItem, todoItems, recentTodoItems);
+                            this.generateTodoAndFinalTodoArray(singleItem, todoItems, recentTodoItems, todoItemsId);
                         }
 
                     }
@@ -235,6 +294,8 @@ export class TasksComponent implements OnInit {
                     name: "No tasks assigned"
                 });
             }
+
+            self.setAllTodoIdsToLocalStorage();
             //update the final list only if the newly fetched data has more todos then the currrently stored
             if (recentTodoItems.length != self.finalTodoList.length) {
                 if (recentTodoItems.length > self.finalTodoList.length) {
@@ -339,7 +400,7 @@ export class TasksComponent implements OnInit {
     }
 
     //the final array that contains the recently active todos with the latest activity performed (if it was a new todo or commented todo)
-    generateTodoAndFinalTodoArray(singleItem, todoItems, recentTodoItems) {
+    generateTodoAndFinalTodoArray(singleItem, todoItems, recentTodoItems, todoItemsId) {
         if (singleItem) {
             var listItem = {
                 "id": singleItem['id'],
@@ -350,7 +411,11 @@ export class TasksComponent implements OnInit {
                 "newTodo": null,
                 "newComment": null
             };
+
             todoItems.push(listItem);
+
+            //push the ids of all todos - will further be used to make api request for timeEntries of each of the todos
+            this.allTodoIds.push(listItem.id);
 
             if (this.checkForRecentActivity(singleItem)) {
                 listItem.newTodo = singleItem['newTodo'] || null;
@@ -365,6 +430,16 @@ export class TasksComponent implements OnInit {
     setAllTodosToLocalStorage() {
         window.localStorage.setItem("allTodos", JSON.stringify(this.todos));
         window.localStorage.setItem("recentTodos", JSON.stringify(this.finalTodoList));
+
+
+    }
+
+    setAllTodoIdsToLocalStorage() {
+        window.localStorage.setItem("allTodoIds", JSON.stringify(this.allTodoIds));
+    }
+
+    getAllTodoIdsToLocalStorage() {
+        return JSON.parse(window.localStorage.getItem("allTodoIds"));
     }
 
     //check if any recent activity has been performed on the todo-item
