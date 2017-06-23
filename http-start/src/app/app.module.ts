@@ -8,8 +8,8 @@ import { Routes, RouterModule } from '@angular/router';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 import { AppRoutingModule } from './app-routing.module';
+import { NguiAutoCompleteModule } from '@ngui/auto-complete';
 
-// import { PushNotificationComponent } from 'ng2-notifications/ng2-notifications';
 import { AppComponent } from './app.component';
 import { AuthServerService } from './shared/auth-server.service';
 import { DataService } from './shared/data.service';
@@ -33,7 +33,8 @@ import { UserDetailsComponent } from './user-details/user-details.component';
         FormsModule,
         HttpModule,
         BrowserAnimationsModule,
-        AppRoutingModule
+        AppRoutingModule,
+        NguiAutoCompleteModule
        
     ],
     providers: [AuthServerService, DataService],

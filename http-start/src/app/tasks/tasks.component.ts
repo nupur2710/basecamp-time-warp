@@ -27,6 +27,7 @@ export class TasksComponent implements OnInit {
     currentDate: string;
     seenNotification: any[] = [];
     @ViewChild('f') signupForm: NgForm;
+    descriptionSource:any[] = [];
 
     // subscribe to the accessToken being sent through the url on first login
     // Get the list of tasks - All todos, Recent Todos
@@ -46,9 +47,6 @@ export class TasksComponent implements OnInit {
         self.onGetTasks();
         self.todos = self.dataService.getTodos();
         self.finalTodoList = self.dataService.getRecentTodos();
-
-        // Generate date for Enter time form
-        // self.generateCurrentDateForForm();
 
         //Keep reading the new todos 
         window.setInterval(function() {
@@ -82,13 +80,6 @@ export class TasksComponent implements OnInit {
         this.todos = this.dataService.getTodos();
         //get a list of the recently active todos assigned to the user
         this.finalTodoList = this.dataService.getRecentTodos();
-    }
-
-
-    //generate today's date in dd/mm/yyyy format
-    generateCurrentDateForForm() {
-        var date = new Date();
-        this.currentDate = date.getDate() + '/' + (date.getMonth() + 1) + '/' + date.getFullYear()
     }
 
     //Click event for enter time button

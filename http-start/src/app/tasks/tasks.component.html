@@ -80,7 +80,7 @@
                             <!--form-row-->
                             <div class="form-row">
                                 <label class="label">Description</label>
-                                <input class="input-text" type="text" id="task-description" name="task-description" ngModel tabindex="2">
+                                <input class="input-text" type="text" id="task-description" name="task-description"  tabindex="2" auto-complete [(ngModel)]="myData" [source]="descriptionSource">
                             </div>
                             <!--form-row-->
                             <div class="form-footer">

@@ -43,12 +43,11 @@ export class NotificationComponent implements OnInit {
                 console.log(error);
             }
         )
-
     }
 
 
-
     onNotificationClicked(event, todos) {
+        window.focus();
         this.notification.close();
         this.dataService.openEnterTimeForm(todos);
     }
@@ -74,8 +73,6 @@ export class NotificationComponent implements OnInit {
                 icon: "http://icons.veryicon.com/256/Internet%20%26%20Web/Socialmedia/Basecamp.png"
             };
         this.createNotification(title, options, todos);
-
-
     }
 
     createNotification(title, options, todos) {
@@ -88,7 +85,6 @@ export class NotificationComponent implements OnInit {
             // If it's okay let's create a notification
             this.createNotificationObject(title, options, todos);
             // notification.onshow = this.mycloseFunction(event);
-
         }
 
         // Otherwise, we need to ask the user for permission
