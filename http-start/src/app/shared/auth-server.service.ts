@@ -61,4 +61,14 @@ export class AuthServerService {
             }
         });
     }
+
+    getComments(item){
+        var url = this.baseUrl + 'todoItems/comments';
+        return this.http.get(url, {
+            params: {
+                "accessToken": localStorage.getItem('accessToken'),
+                'itemId': item.id
+            }
+        });
+    }
 }

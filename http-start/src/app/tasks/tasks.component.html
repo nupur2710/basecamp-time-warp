@@ -75,12 +75,12 @@
                             <!--form-row-->
                             <div class="form-row">
                                 <label class="label">Time</label>
-                                <input class="input-text" tabindex="1" id="task-time" name="task-time" type="number" required ngModel />
+                                <input class="input-text"  id="task-time" name="task-time" type="number" required ngModel min="0" pattern="^[0-9]"/>
                             </div>
                             <!--form-row-->
                             <div class="form-row">
                                 <label class="label">Description</label>
-                                <input class="input-text" type="text" id="task-description" name="task-description"  tabindex="2" auto-complete [(ngModel)]="myData" [source]="descriptionSource">
+                                <input class="input-text" type="text" id="task-description" name="task-description" autocomplete="off"  auto-complete [(ngModel)]="myData" [source]="descriptionSource">
                             </div>
                             <!--form-row-->
                             <div class="form-footer">

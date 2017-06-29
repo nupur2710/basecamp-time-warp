@@ -55,7 +55,7 @@ export class TasksComponent implements OnInit {
         window.setInterval(function() {
             this.onGetTasks();
 
-        }.bind(this), 6000);
+        }.bind(this), 10000);
 
         //Keep reading the time entries for all todos
         window.setInterval(function() {
@@ -69,7 +69,6 @@ export class TasksComponent implements OnInit {
         this.subscription = this.dataService.todosUpdated.subscribe(
             (todos: Todo[]) => {
                 this.todos = todos;
-                console.log(todos);
             }
         )
 
@@ -97,18 +96,16 @@ export class TasksComponent implements OnInit {
         console.log("get time entries description");
         let itemIdArray = this.getAllTodoIdsToLocalStorage(),
             timeEntryRequestArray = [];
-            if(itemIdArray.length){
-                for (index = 0; index < itemIdArray.length; index++) {
-            timeEntryRequestArray.push(this.serverService.getTimeEntriesForSingleTodoItem(itemIdArray[index]));
+        if (itemIdArray.length) {
+            for (index = 0; index < itemIdArray.length; index++) {
+                timeEntryRequestArray.push(this.serverService.getTimeEntriesForSingleTodoItem(itemIdArray[index]));
+            }
+            Observable.forkJoin(timeEntryRequestArray).subscribe(
+                (results) => {
+                    self.populateDescriptionSourceOfTimeEntry(results);
+                }
+            );
         }
-        Observable.forkJoin(timeEntryRequestArray).subscribe(
-            (results) => {
-                self.populateDescriptionSourceOfTimeEntry(results);
-            }
-        );
-            }
-        
-
     }
 
     populateDescriptionSourceOfTimeEntry(results) {
@@ -129,11 +126,16 @@ export class TasksComponent implements OnInit {
                 }
             }
         }
+        this.remmoveDuplicateTimeDescription();
         this.setDescriptionSourceToLocalStorage();
     }
 
+    //removes the multiple entries of the same description
+    remmoveDuplicateTimeDescription() {
+        this.descriptionSource = Array.from(new Set(this.descriptionSource));
+    }
+
     setDescriptionSourceToLocalStorage() {
-        console.log(this.descriptionSource);
         window.localStorage.setItem("descriptionSource", JSON.stringify(this.descriptionSource));
     }
 
@@ -354,6 +356,8 @@ export class TasksComponent implements OnInit {
             diff = this.checkIfNotificationSeen(newTodoList);
         }
 
+        diff = this.checkForMultipleComments(diff);
+
         for (i = 0; i < diff.length; i++) {
 
             this.seenNotification.push(diff[i]['id']);
@@ -361,6 +365,26 @@ export class TasksComponent implements OnInit {
             this.setNotificationSeenFlag(this.seenNotification);
         }
         return diff;
+    }
+
+    checkForMultipleComments(diff) {
+        var commentReuqestArray = [],
+            self = this;
+        for (var index = 0; index < diff.length; index++) {
+            if (parseInt(diff[index].commentCount) > 1) {
+                commentReuqestArray.push(this.serverService.getComments(diff[index]));
+            }
+        }
+        Observable.forkJoin(commentReuqestArray).subscribe(
+            (results) => {
+                self.populateComments(results);
+            }
+        );
+        return diff;
+    }
+
+    populateComments(results){
+        debugger
     }
 
 
@@ -408,6 +432,7 @@ export class TasksComponent implements OnInit {
                 "createdBy": singleItem['creator-name'],
                 "assignedTo": singleItem['responsible-party-name'],
                 "dueDate": singleItem['due-at'] || "",
+                "commentCount": singleItem['comments-count'],
                 "newTodo": null,
                 "newComment": null
             };
