@@ -313,8 +313,6 @@ export class TasksComponent implements OnInit {
 
     // get the new todos being added to the recent todos
     triggerEventsForNewlyActiveTodos(newTodoList, oldTodoList) {
-        debugger
-
         var diff = [],
             isInArray;
         if (oldTodoList.length) {
@@ -322,15 +320,14 @@ export class TasksComponent implements OnInit {
                 isInArray = false;
                 for (var j = 0; j < oldTodoList.length; j++) {
                     if (newTodoList[i]['id'] === oldTodoList[j]['id']) {
-
-                        if (newTodoList[i]['newTodo']) {
-                            isInArray = true;
-                        } else if (newTodoList[i]['newComment']) {
+                        if (newTodoList[i]['newComment']) {
                             if (newTodoList[i]['commentCount'] === oldTodoList[j]['commentCount']) {
                                 isInArray = true;
                             } else {
                                 isInArray = false;
                             }
+                        } else if (newTodoList[i]['newTodo']) {
+                            isInArray = true;
                         }
 
                     }
@@ -397,22 +394,23 @@ export class TasksComponent implements OnInit {
         var commentReuqestArray = [],
             self = this;
         if (diff.length) {
+
             for (var index = 0; index < diff.length; index++) {
-                if (parseInt(diff[index].commentCount) > 1) {
-                    commentReuqestArray.push(this.serverService.getComments(diff[index]));
+
+                if (diff[index].newComment) {
+                    if (parseInt(diff[index].commentCount) >= 1) {
+                        commentReuqestArray.push(this.serverService.getComments(diff[index]));
+                    }
+                } else {
+                    self.groupNotificationsForTodoAndComments(diff, newTodoList)
                 }
+
             }
             Observable.forkJoin(commentReuqestArray).subscribe(
                 (results) => {
                     self.populateComments(results, diff);
+                    self.groupNotificationsForTodoAndComments(diff, newTodoList)
 
-                    for (var i = 0; i < diff.length; i++) {
-                        this.seenNotification.push(diff[i]['id']);
-                        this.dataService.triggerEventForNotification(diff[i]);
-                        this.setNotificationSeenFlag(this.seenNotification);
-                    }
-
-                    self.generateTodosAndRecentTodos(newTodoList);
                 }
             );
         } else {
@@ -420,6 +418,16 @@ export class TasksComponent implements OnInit {
         }
 
         return diff;
+    }
+
+    groupNotificationsForTodoAndComments(diff, newTodoList) {
+        for (var i = 0; i < diff.length; i++) {
+            this.seenNotification.push(diff[i]['id']);
+            this.dataService.triggerEventForNotification(diff[i]);
+            this.setNotificationSeenFlag(this.seenNotification);
+        }
+
+        this.generateTodosAndRecentTodos(newTodoList);
     }
 
     //response for the todo items which have more then one comments
@@ -437,12 +445,18 @@ export class TasksComponent implements OnInit {
                 for (todoIndex = 0; todoIndex < this.finalTodoList.length; todoIndex++) {
                     //compare the ids
                     if (comments[0]['commentable-id'] === this.finalTodoList[todoIndex].id) {
-                        this.finalTodoList[todoIndex].commentsCount = commentsArray.length;
-
+                       
                         //compare the length of previous comments and current comments
                         if (commentsArray.length > Number(this.finalTodoList[todoIndex].commentCount)) {
                             differentInComments = commentsArray.length - Number(this.finalTodoList[todoIndex].commentCount);
+
+                            for(var diffIndex=0; diffIndex<diff.length; diffIndex++){
+                                if(diff[diffIndex].id===comments[0]['commentable-id']){
+                                    diff[diffIndex].newCommentCount = differentInComments;
+                                }
+                            }
                         }
+
                         break;
                     }
                 }

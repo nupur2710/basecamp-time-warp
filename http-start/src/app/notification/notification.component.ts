@@ -67,11 +67,21 @@ export class NotificationComponent implements OnInit {
     createCommentNotification(todos) {
         var titleName = todos.name,
             user = todos.assignedTo,
-            title = "Hi " + user + ", looks like you just added a comment to: " + titleName + ".",
+            title,
             options = {
                 body: "Do you need to add any time?",
                 icon: "http://icons.veryicon.com/256/Internet%20%26%20Web/Socialmedia/Basecamp.png"
             };
+        if (todos.newCommentCount) {
+            if (todos.newCommentCount > 1) {
+                title = "Hi " + user + ", looks like you just added " + todos.newCommentCount + " comments to: " + titleName + ".";
+            } else {
+                title = "Hi " + user + ", looks like you just added " + todos.newCommentCount + " comment to: " + titleName + ".";
+            }
+        }else{
+             title = "Hi " + user + ", looks like you just added a comment to: " + titleName + ".";
+        }
+
         this.createNotification(title, options, todos);
     }
 
