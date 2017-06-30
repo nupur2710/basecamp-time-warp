@@ -68,17 +68,17 @@ app.get("/auth/basecamp", function(req, res, next) {
         
 
 
-        db.get('posts')
-            .push(accessToken)
-            .last()
-            .assign({ id: Date.now() })
-            .write()
-            .then(post => res.redirect('http://127.0.0.1:4200/tasks?accessToken=' + accessToken));
+        // db.get('posts')
+        //     .push(accessToken)
+        //     .last()
+        //     .assign({ id: Date.now() })
+        //     .write()
+        //     .then(post => res.redirect('http://127.0.0.1:4200/tasks?accessToken=' + accessToken));
 
         // prod link http://192.168.0.175:8010/timewrap/tasks?accessToken=
 
         //local link http://127.0.0.1:4200/tasks?accessToken=
-        // return res.redirect('http://127.0.0.1:4200/tasks?accessToken=' + accessToken);
+        return res.redirect('http://127.0.0.1:4200/tasks?accessToken=' + accessToken);
     });
 
 });

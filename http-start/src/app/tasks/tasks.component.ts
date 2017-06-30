@@ -55,7 +55,7 @@ export class TasksComponent implements OnInit {
         window.setInterval(function() {
             this.onGetTasks();
 
-        }.bind(this), 10000);
+        }.bind(this), 90000);
 
         //Keep reading the time entries for all todos
         window.setInterval(function() {
@@ -112,7 +112,7 @@ export class TasksComponent implements OnInit {
         this.descriptionSource = [];
         var timeEntry, timeEntryArray;
         for (var index = 0; index < results.length; index++) {
-            if (JSON.parse(results[index]['_body'])['time-entries']['time-entry']) {
+            if (JSON.parse(results[index]['_body']) && JSON.parse(results[index]['_body'])['time-entries'] && JSON.parse(results[index]['_body'])['time-entries']['time-entry']) {
                 timeEntry = JSON.parse(results[index]['_body'])['time-entries']['time-entry'];
                 if (timeEntry.hasOwnProperty('0')) {
                     timeEntryArray = Object.keys(timeEntry).map(function(e) {
@@ -141,69 +141,6 @@ export class TasksComponent implements OnInit {
 
     getDescriptionSourceFromLocalStorage() {
         return JSON.parse(window.localStorage.getItem("descriptionSource"));
-    }
-    //Click event for enter time button
-    onEnterTime(item) {
-        $('.modal-content').toggleClass('popup-show');
-        $('.close').toggleClass('close-show');
-
-        //hide the above task added successfully button
-        this.hideSuccessMessage();
-
-        //set the item corresponding to which, the time entry is to be made
-        this.currentItem = item;
-    }
-
-    //Event when Enter time form is closed
-    onCloseClick() {
-        $('.modal-content').removeClass('popup-show');
-        $('.close').toggleClass('close-show');
-
-        //set the current item - To be displayed in the form empty
-        this.currentItem = {
-            "name": ""
-        };
-    }
-
-    //Hide success message initiallly while entering the time log
-    hideSuccessMessage() {
-        $("#normalform").css("display", "block");
-        $(".block-msg.sucess").css("display", "none");
-    }
-
-    // show success messsage after the time entry has been posted corresponding to the todo item
-    showSuccessMessage() {
-        $(".block-msg.sucess").css("display", "block");
-        $("#normalform").css("display", "none");
-    }
-
-    //On cancel button click
-    onCancelClick() {
-        this.onCloseClick();
-    }
-
-    // Submit the enter time form entry
-    onSubmit(f) {
-        var data = {
-            "time-entry": {
-                "person-id": JSON.parse(localStorage.getItem('userDetails'))['person_id'],
-                "date": $("#datepicker").val(),
-                "hours": f.value['task-time'],
-                "description": f.value['task-description']
-            }
-        };
-        var self = this;
-
-        //Post the time entry to server
-        this.serverService.postTimeEntries(this.currentItem, data).subscribe(
-            function(response: Response) {
-                console.log(response);
-                self.getTimeLogs();
-                self.showSuccessMessage();
-
-            },
-            (error) => console.log(error)
-        );
     }
 
 
@@ -234,7 +171,6 @@ export class TasksComponent implements OnInit {
     }
 
     displayTasks(response) {
-
         if (response) {
             var listIndex, itemIndex,
                 self = this,
@@ -299,18 +235,58 @@ export class TasksComponent implements OnInit {
 
             self.setAllTodoIdsToLocalStorage();
             //update the final list only if the newly fetched data has more todos then the currrently stored
-            if (recentTodoItems.length != self.finalTodoList.length) {
-                if (recentTodoItems.length > self.finalTodoList.length) {
-                    var newTodos = this.triggerEventsForNewlyActiveTodos(recentTodoItems, self.finalTodoList);
-                }
-                self.finalTodoList = recentTodoItems;
-                self.dataService.addTodos(self.todos);
-                self.dataService.addRecentTodos(self.finalTodoList);
-                self.setAllTodosToLocalStorage();
-            }
+            // if (recentTodoItems.length != self.finalTodoList.length) {
+            //     if (recentTodoItems.length > self.finalTodoList.length) {
+            this.triggerEventsForNewlyActiveTodos(recentTodoItems, self.finalTodoList);
+            // self.generateTodosAndRecentTodos(recentTodoItems);
+            //     }
+
+            // }
         }
 
         this.updateSeenNotificationArray();
+    }
+
+    //the final array that contains the recently active todos with the latest activity performed (if it was a new todo or commented todo)
+    generateTodoAndFinalTodoArray(singleItem, todoItems, recentTodoItems, todoItemsId) {
+        if (singleItem) {
+            var listItem = {
+                "id": singleItem['id'],
+                "name": singleItem['content'],
+                "createdBy": singleItem['creator-name'],
+                "assignedTo": singleItem['responsible-party-name'],
+                "dueDate": singleItem['due-at'] || "",
+                "commentCount": singleItem['comments-count'],
+                "newTodo": null,
+                "newComment": null
+            };
+
+            todoItems.push(listItem);
+
+
+            if (this.checkForRecentActivity(singleItem)) {
+                listItem.newTodo = singleItem['newTodo'] || null;
+                listItem.newComment = singleItem['newComment'] || null;
+                recentTodoItems.push(listItem);
+
+
+                //push the ids of all todos - will further be used to make api request for timeEntries of each of the todos
+                this.allTodoIds.push({
+                    "id": listItem.id,
+                    "newComment": listItem.newComment,
+                    "newTodo": listItem.newTodo,
+                    "commentCount": listItem.commentCount
+                });
+            }
+        }
+    }
+
+    generateTodosAndRecentTodos(recentTodoItems) {
+        var self = this;
+        self.finalTodoList = recentTodoItems;
+        self.dataService.addTodos(self.todos);
+        self.dataService.addRecentTodos(self.finalTodoList);
+        self.setAllTodosToLocalStorage();
     }
 
     updateSeenNotificationArray() {
@@ -337,6 +313,7 @@ export class TasksComponent implements OnInit {
 
     // get the new todos being added to the recent todos
     triggerEventsForNewlyActiveTodos(newTodoList, oldTodoList) {
+        debugger
 
         var diff = [],
             isInArray;
@@ -345,7 +322,17 @@ export class TasksComponent implements OnInit {
                 isInArray = false;
                 for (var j = 0; j < oldTodoList.length; j++) {
                     if (newTodoList[i]['id'] === oldTodoList[j]['id']) {
-                        isInArray = true;
+
+                        if (newTodoList[i]['newTodo']) {
+                            isInArray = true;
+                        } else if (newTodoList[i]['newComment']) {
+                            if (newTodoList[i]['commentCount'] === oldTodoList[j]['commentCount']) {
+                                isInArray = true;
+                            } else {
+                                isInArray = false;
+                            }
+                        }
+
                     }
                 }
                 if (!isInArray) {
@@ -356,41 +343,8 @@ export class TasksComponent implements OnInit {
             diff = this.checkIfNotificationSeen(newTodoList);
         }
 
-        diff = this.checkForMultipleComments(diff);
+        diff = this.checkForMultipleComments(diff, newTodoList);
 
-        for (i = 0; i < diff.length; i++) {
-
-            this.seenNotification.push(diff[i]['id']);
-            this.dataService.triggerEventForNotification(diff[i]);
-            this.setNotificationSeenFlag(this.seenNotification);
-        }
-        return diff;
-    }
-
-    checkForMultipleComments(diff) {
-        var commentReuqestArray = [],
-            self = this;
-        for (var index = 0; index < diff.length; index++) {
-            if (parseInt(diff[index].commentCount) > 1) {
-                commentReuqestArray.push(this.serverService.getComments(diff[index]));
-            }
-        }
-        Observable.forkJoin(commentReuqestArray).subscribe(
-            (results) => {
-                self.populateComments(results);
-            }
-        );
-        return diff;
-    }
-
-    populateComments(results){
-        debugger
-    }
-
-
-    //set the seenNotification todos array in local storage
-    setNotificationSeenFlag(seenNotification) {
-        window.localStorage.setItem("seenNotification", JSON.stringify(seenNotification));
     }
 
     //check if the notification for this active has been shown or not. If not, send that todo to give a notification
@@ -419,36 +373,102 @@ export class TasksComponent implements OnInit {
         } else {
             showNotif = newTodoList;
         }
-
+        //showNotif = newTodoList;
         return showNotif;
     }
 
-    //the final array that contains the recently active todos with the latest activity performed (if it was a new todo or commented todo)
-    generateTodoAndFinalTodoArray(singleItem, todoItems, recentTodoItems, todoItemsId) {
-        if (singleItem) {
-            var listItem = {
-                "id": singleItem['id'],
-                "name": singleItem['content'],
-                "createdBy": singleItem['creator-name'],
-                "assignedTo": singleItem['responsible-party-name'],
-                "dueDate": singleItem['due-at'] || "",
-                "commentCount": singleItem['comments-count'],
-                "newTodo": null,
-                "newComment": null
-            };
+    //check if any recent activity has been performed on the todo-item
+    checkForRecentActivity(singleItem) {
+        var today = new Date().toDateString();
+        //check if a comment has been made on the todo-item today
+        if (new Date(singleItem['commented-at']).toDateString() === today) {
+            singleItem.newComment = true;
+            return true;
+        }
 
-            todoItems.push(listItem);
+        //check if the todo-item has been created today
+        else if (new Date(singleItem['created-at']).toDateString() === today) {
+            singleItem.newTodo = true;
+            return true;
+        }
+    }
 
-            //push the ids of all todos - will further be used to make api request for timeEntries of each of the todos
-            this.allTodoIds.push(listItem.id);
+    checkForMultipleComments(diff, newTodoList) {
+        var commentReuqestArray = [],
+            self = this;
+        if (diff.length) {
+            for (var index = 0; index < diff.length; index++) {
+                if (parseInt(diff[index].commentCount) > 1) {
+                    commentReuqestArray.push(this.serverService.getComments(diff[index]));
+                }
+            }
+            Observable.forkJoin(commentReuqestArray).subscribe(
+                (results) => {
+                    self.populateComments(results, diff);
 
-            if (this.checkForRecentActivity(singleItem)) {
-                listItem.newTodo = singleItem['newTodo'] || null;
-                listItem.newComment = singleItem['newComment'] || null;
-                recentTodoItems.push(listItem);
+                    for (var i = 0; i < diff.length; i++) {
+                        this.seenNotification.push(diff[i]['id']);
+                        this.dataService.triggerEventForNotification(diff[i]);
+                        this.setNotificationSeenFlag(this.seenNotification);
+                    }
+
+                    self.generateTodosAndRecentTodos(newTodoList);
+                }
+            );
+        } else {
+            self.generateTodosAndRecentTodos(newTodoList);
+        }
+
+        return diff;
+    }
+
+    //response for the todo items which have more then one comments
+    populateComments(results, diff) {
+        var comments, commentsArray, index, commentsIndex, todoIndex, newCommentCounter, differentInComments;
+
+        // get the number of comments for todos
+        for (index = 0; index < results.length; index++) {
+            comments = JSON.parse(results[index]['_body'])['comments']['comment'];
+            commentsArray = Object.keys(comments).map(function(e) {
+                return [comments[e]];
+            });
+
+            if (this.finalTodoList.length) {
+                for (todoIndex = 0; todoIndex < this.finalTodoList.length; todoIndex++) {
+                    //compare the ids
+                    if (comments[0]['commentable-id'] === this.finalTodoList[todoIndex].id) {
+                        this.finalTodoList[todoIndex].commentsCount = commentsArray.length;
+
+                        //compare the length of previous comments and current comments
+                        if (commentsArray.length > Number(this.finalTodoList[todoIndex].commentCount)) {
+                            differentInComments = commentsArray.length - Number(this.finalTodoList[todoIndex].commentCount);
+                        }
+                        break;
+                    }
+                }
+            } else {
+                newCommentCounter = 0;
+                for (commentsIndex = 0; commentsIndex < commentsArray.length; commentsIndex++) {
+
+                    //check for the comments which have been entered today
+                    if (new Date(commentsArray[commentsIndex][0]['created-at']).toDateString() === new Date().toDateString()) {
+                        newCommentCounter++;
+                    }
+
+                }
             }
         }
     }
+
+
+    //set the seenNotification todos array in local storage
+    setNotificationSeenFlag(seenNotification) {
+        window.localStorage.setItem("seenNotification", JSON.stringify(seenNotification));
+    }
+
+
+
+
 
 
     //set allTodos and recentTodos in local storage
@@ -467,21 +487,6 @@ export class TasksComponent implements OnInit {
         return JSON.parse(window.localStorage.getItem("allTodoIds"));
     }
 
-    //check if any recent activity has been performed on the todo-item
-    checkForRecentActivity(singleItem) {
-        var today = new Date().toDateString();
-        //check if a comment has been made on the todo-item today
-        if (new Date(singleItem['commented-at']).toDateString() === today) {
-            singleItem.newComment = true;
-            return true;
-        }
-
-        //check if the todo-item has been created today
-        else if (new Date(singleItem['created-at']).toDateString() === today) {
-            singleItem.newTodo = true;
-            return true;
-        }
-    }
 
     //the view time logs click event to display the generated logs
     viewTimeLogs($event) {
@@ -566,6 +571,70 @@ export class TasksComponent implements OnInit {
                 }
             }
         }
+    }
+
+    //Click event for enter time button
+    onEnterTime(item) {
+        $('.modal-content').toggleClass('popup-show');
+        $('.close').toggleClass('close-show');
+
+        //hide the above task added successfully button
+        this.hideSuccessMessage();
+
+        //set the item corresponding to which, the time entry is to be made
+        this.currentItem = item;
+    }
+
+    //Event when Enter time form is closed
+    onCloseClick() {
+        $('.modal-content').removeClass('popup-show');
+        $('.close').toggleClass('close-show');
+
+        //set the current item - To be displayed in the form empty
+        this.currentItem = {
+            "name": ""
+        };
+    }
+
+    //Hide success message initiallly while entering the time log
+    hideSuccessMessage() {
+        $("#normalform").css("display", "block");
+        $(".block-msg.sucess").css("display", "none");
+    }
+
+    // show success messsage after the time entry has been posted corresponding to the todo item
+    showSuccessMessage() {
+        $(".block-msg.sucess").css("display", "block");
+        $("#normalform").css("display", "none");
+    }
+
+    //On cancel button click
+    onCancelClick() {
+        this.onCloseClick();
+    }
+
+    // Submit the enter time form entry
+    onSubmit(f) {
+        var data = {
+            "time-entry": {
+                "person-id": JSON.parse(localStorage.getItem('userDetails'))['person_id'],
+                "date": $("#datepicker").val(),
+                "hours": f.value['task-time'],
+                "description": f.value['task-description']
+            }
+        };
+        var self = this;
+
+        //Post the time entry to server
+        this.serverService.postTimeEntries(this.currentItem, data).subscribe(
+            function(response: Response) {
+                console.log(response);
+                self.getTimeLogs();
+                self.showSuccessMessage();
+
+            },
+            (error) => console.log(error)
+        );
     }
 
 
