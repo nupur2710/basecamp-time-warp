@@ -23,7 +23,8 @@ export class TasksComponent implements OnInit {
     finalTodoList: any[] = [];
     finalTimeLogs: any[] = [];
     currentItem = {
-        "name": ""
+        "name": "",
+        "newCommentCount" : ""
     };
     currentDate: string;
     seenNotification: any[] = [];
@@ -445,13 +446,13 @@ export class TasksComponent implements OnInit {
                 for (todoIndex = 0; todoIndex < this.finalTodoList.length; todoIndex++) {
                     //compare the ids
                     if (comments[0]['commentable-id'] === this.finalTodoList[todoIndex].id) {
-                       
+
                         //compare the length of previous comments and current comments
                         if (commentsArray.length > Number(this.finalTodoList[todoIndex].commentCount)) {
                             differentInComments = commentsArray.length - Number(this.finalTodoList[todoIndex].commentCount);
 
-                            for(var diffIndex=0; diffIndex<diff.length; diffIndex++){
-                                if(diff[diffIndex].id===comments[0]['commentable-id']){
+                            for (var diffIndex = 0; diffIndex < diff.length; diffIndex++) {
+                                if (diff[diffIndex].id === comments[0]['commentable-id']) {
                                     diff[diffIndex].newCommentCount = differentInComments;
                                 }
                             }
@@ -594,8 +595,8 @@ export class TasksComponent implements OnInit {
 
         //hide the above task added successfully button
         this.hideSuccessMessage();
-
-        //set the item corresponding to which, the time entry is to be made
+        debugger
+        //set the item corresponding to which, the time entry is to be mad
         this.currentItem = item;
     }
 
@@ -606,7 +607,7 @@ export class TasksComponent implements OnInit {
 
         //set the current item - To be displayed in the form empty
         this.currentItem = {
-            "name": ""
+            "name": "", "newCommentCount":""
         };
     }
 

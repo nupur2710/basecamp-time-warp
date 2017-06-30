@@ -79,6 +79,7 @@ export class NotificationComponent implements OnInit {
                 title = "Hi " + user + ", looks like you just added " + todos.newCommentCount + " comment to: " + titleName + ".";
             }
         }else{
+            todos.newCommentCount = 1;
              title = "Hi " + user + ", looks like you just added a comment to: " + titleName + ".";
         }
 
