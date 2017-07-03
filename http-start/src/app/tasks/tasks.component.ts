@@ -24,8 +24,12 @@ export class TasksComponent implements OnInit {
     finalTimeLogs: any[] = [];
     currentItem = {
         "name": "",
-        "newCommentCount" : ""
+        "newCommentCount": 0,
+        'timeStamp': [],
+        'timeEntry': [],
+        'description': []
     };
+
     currentDate: string;
     seenNotification: any[] = [];
     @ViewChild('f') signupForm: NgForm;
@@ -56,7 +60,7 @@ export class TasksComponent implements OnInit {
         window.setInterval(function() {
             this.onGetTasks();
 
-        }.bind(this), 90000);
+        }.bind(this), 20000);
 
         //Keep reading the time entries for all todos
         window.setInterval(function() {
@@ -272,13 +276,11 @@ export class TasksComponent implements OnInit {
 
 
                 //push the ids of all todos - will further be used to make api request for timeEntries of each of the todos
-                this.allTodoIds.push({
-                    "id": listItem.id,
-                    "newComment": listItem.newComment,
-                    "newTodo": listItem.newTodo,
-                    "commentCount": listItem.commentCount
-                });
+
             }
+            this.allTodoIds.push({
+                "id": listItem.id
+            });
         }
     }
 
@@ -433,7 +435,7 @@ export class TasksComponent implements OnInit {
 
     //response for the todo items which have more then one comments
     populateComments(results, diff) {
-        var comments, commentsArray, index, commentsIndex, todoIndex, newCommentCounter, differentInComments;
+        var comments, commentsArray, index, commentsIndex, todoIndex, newCommentCounter, differentInComments, timeStampArray;
 
         // get the number of comments for todos
         for (index = 0; index < results.length; index++) {
@@ -441,6 +443,7 @@ export class TasksComponent implements OnInit {
             commentsArray = Object.keys(comments).map(function(e) {
                 return [comments[e]];
             });
+            timeStampArray = [];
 
             if (this.finalTodoList.length) {
                 for (todoIndex = 0; todoIndex < this.finalTodoList.length; todoIndex++) {
@@ -451,9 +454,16 @@ export class TasksComponent implements OnInit {
                         if (commentsArray.length > Number(this.finalTodoList[todoIndex].commentCount)) {
                             differentInComments = commentsArray.length - Number(this.finalTodoList[todoIndex].commentCount);
 
+                            //add the newCommentCount to the diff todos array
+
+                            for (commentsIndex = commentsArray.length - differentInComments; commentsIndex < commentsArray.length; commentsIndex++) {
+                                timeStampArray.push(new Date(commentsArray[commentsIndex][0]['created-at']).toLocaleTimeString());
+
+                            }
                             for (var diffIndex = 0; diffIndex < diff.length; diffIndex++) {
                                 if (diff[diffIndex].id === comments[0]['commentable-id']) {
                                     diff[diffIndex].newCommentCount = differentInComments;
+                                    diff[diffIndex].timeStamp = timeStampArray;
                                 }
                             }
                         }
@@ -595,7 +605,6 @@ export class TasksComponent implements OnInit {
 
         //hide the above task added successfully button
         this.hideSuccessMessage();
-        debugger
         //set the item corresponding to which, the time entry is to be mad
         this.currentItem = item;
     }
@@ -607,7 +616,11 @@ export class TasksComponent implements OnInit {
 
         //set the current item - To be displayed in the form empty
         this.currentItem = {
-            "name": "", "newCommentCount":""
+            "name": "",
+            "newCommentCount": 0,
+            'timeStamp': [],
+            'timeEntry': [],
+            'description': []
         };
     }
 
@@ -629,29 +642,50 @@ export class TasksComponent implements OnInit {
     }
 
     // Submit the enter time form entry
-    onSubmit(f) {
-        var data = {
-            "time-entry": {
-                "person-id": JSON.parse(localStorage.getItem('userDetails'))['person_id'],
-                "date": $("#datepicker").val(),
-                "hours": f.value['task-time'],
-                "description": f.value['task-description']
-            }
-        };
-        var self = this;
+    onSubmit(f, currentItem) {
+        var timeEntryObject, timeEntryRequestArray = [],
+            self = this;
+        if (currentItem.timeStamp) {
+            for (let i = 0; i < currentItem.timeStamp.length; i++) {
+                timeEntryObject = {
+                    "time-entry": {
+                        "person-id": JSON.parse(localStorage.getItem('userDetails'))['person_id'],
+                        "date": $("#datepicker").val(),
+                        "hours": f.value['task-time-' + i],
+                        "description": f.value['task-description-' + i]
+                    }
+                };
+                timeEntryRequestArray.push(this.serverService.postTimeEntries(currentItem, timeEntryObject));
+            }            Observable.forkJoin(timeEntryRequestArray).subscribe(
+                (results) => {
+                    self.getTimeEntryResponse(results);
+                }
+            );
+        } else {
+            timeEntryObject = {
+                "time-entry": {
+                    "person-id": JSON.parse(localStorage.getItem('userDetails'))['person_id'],
+                    "date": $("#datepicker").val(),
+                    "hours": f.value['task-time'],
+                    "description": f.value['task-description']
+                }
+            };
+            this.serverService.postTimeEntries(currentItem, timeEntryObject).subscribe(
+                (response) => self.getTimeEntryResponse(response),
+                (error) => console.log(error)
+            );
+        }
+        f.reset();
 
-        //Post the time entry to server
-        this.serverService.postTimeEntries(this.currentItem, data).subscribe(
-            function(response: Response) {
-                console.log(response);
-                self.getTimeLogs();
-                self.showSuccessMessage();
-
-            },
-            (error) => console.log(error)
-        );
     }
 
+    trackByIndex(index: number, obj: any): any {
+        return index;
+    }
 
+        getTimeEntryResponse(results) {
+        this.getTimeLogs();
+        this.showSuccessMessage();
+    }
 
 }
