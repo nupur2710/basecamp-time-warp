@@ -65,7 +65,7 @@ app.get("/auth/basecamp", function(req, res, next) {
         console.log(body);
         accessToken = JSON.parse(body).access_token;
         console.log("token is " + accessToken);
-        
+
 
 
         // db.get('posts')
@@ -75,7 +75,7 @@ app.get("/auth/basecamp", function(req, res, next) {
         //     .write()
         //     .then(post => res.redirect('http://127.0.0.1:4200/tasks?accessToken=' + accessToken));
 
-        // prod link http://192.168.0.175:8010/timewrap/tasks?accessToken=
+        // prod link http://192.168.0.175:8010/tasks?accessToken=
 
         //local link http://127.0.0.1:4200/tasks?accessToken=
         return res.redirect('http://127.0.0.1:4200/tasks?accessToken=' + accessToken);
@@ -139,6 +139,7 @@ app.get('/todoItems/timeEntries', function(req, res) {
 //post time entry on a todo item
 app.get('/todoItems/makeTimeEntries', function(req, res) {
     var data = jsonxml(req.query.data);
+    console.log(data);
 
     request.post({
         url: url + '/todo_items/' + req.query.itemId + '/time_entries.xml',
@@ -157,15 +158,13 @@ app.get('/todoItems/makeTimeEntries', function(req, res) {
 
 //get the comments corresponding to a single todo item
 app.get('/todoItems/comments', function(req, res) {
-    console.log("inside comments");
-   request({
+    request({
         url: url + '/todo_items/' + req.query.itemId + '/comments.xml',
         headers: {
             "Authorization": "Bearer " + req.query.accessToken
         }
     }, function(error, response, body) {
         to_json(body, function(error, data) {
-            console.log("response from comments");
             res.json(data);
         });
 

@@ -74,14 +74,14 @@
                             </div>
                             <!--form-row-->
                             <div class="more-comments" *ngIf="currentItem.timeStamp; else singleTodoComment">
-                                <div class="repeat-time and description" *ngFor="let timeStamp of currentItem.timeStamp;let i=index; trackBy:trackByIndex">
+                                <div class="repeat-time and description" *ngFor="let timeStamp of currentItem.timeStamp;let i=index">
                                     <div class="form-row">
                                         <label class="label">Time Stamp</label>
                                         <p>{{timeStamp}}</p>
                                     </div>
                                     <div class="form-row">
                                         <label class="label">Time</label>
-                                        <input class="input-text" id="task-time-{{i}}" name="task-time-{{i}}" type="number" required  min="0" pattern="^[0-9]" [(ngModel)]="timeStamp.time" />
+                                        <input class="input-text" id="task-time-{{i}}" name="task-time-{{i}}" type="number" required min="0" pattern="^[0-9]" [(ngModel)]="timeStamp.time" />
                                     </div>
                                     <!--form-row-->
                                     <div class="form-row">
@@ -100,7 +100,7 @@
                                     <label class="label">Description</label>
                                     <input class="input-text" type="text" id="task-description" name="task-description" autocomplete="off" auto-complete ngModel [source]="descriptionSource">
                                 </div>
-                            </ng-template >
+                            </ng-template>
                             <div class="form-footer">
                                 <div class="form-row">
                                     <button name="formSend" id="formSend" type="submit" class="btn btn-fill">Add</button>

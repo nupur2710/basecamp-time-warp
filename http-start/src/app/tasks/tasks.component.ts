@@ -101,9 +101,10 @@ export class TasksComponent implements OnInit {
         console.log("get time entries description");
         let itemIdArray = this.getAllTodoIdsToLocalStorage(),
             timeEntryRequestArray = [];
-        if (itemIdArray.length) {
+
+        if (itemIdArray && itemIdArray.length) {
             for (index = 0; index < itemIdArray.length; index++) {
-                timeEntryRequestArray.push(this.serverService.getTimeEntriesForSingleTodoItem(itemIdArray[index]));
+                timeEntryRequestArray.push(this.serverService.getTimeEntriesForSingleTodoItem(itemIdArray[index]['id']));
             }
             Observable.forkJoin(timeEntryRequestArray).subscribe(
                 (results) => {
@@ -656,7 +657,8 @@ export class TasksComponent implements OnInit {
                     }
                 };
                 timeEntryRequestArray.push(this.serverService.postTimeEntries(currentItem, timeEntryObject));
-            }            Observable.forkJoin(timeEntryRequestArray).subscribe(
+            }
+            Observable.forkJoin(timeEntryRequestArray).subscribe(
                 (results) => {
                     self.getTimeEntryResponse(results);
                 }
@@ -679,11 +681,7 @@ export class TasksComponent implements OnInit {
 
     }
 
-    trackByIndex(index: number, obj: any): any {
-        return index;
-    }
-
-        getTimeEntryResponse(results) {
+    getTimeEntryResponse(results) {
         this.getTimeLogs();
         this.showSuccessMessage();
     }
