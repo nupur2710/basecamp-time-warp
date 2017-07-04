@@ -62,12 +62,12 @@
                             <h4 class="form-title">{{currentItem.name}}</h4>
                         </div>
                         <!--form-header-->
-                        <div class="form-body">
+                        <div class="form-body" ngModelGroup="timeDescription" #timeDescription="ngModelGroup">
                             <div class="row form-row">
                                 <div class="col col12">
                                     <label class="label">Choose date</label>
                                     <div class="input-with-icon">
-                                        <input type="text" id="datepicker" class="input-text" ngModel name="datepicker" [(ngModel)]="currentDate" /><img class="ui-datepicker-trigger" src="https://jqueryui.com/resources/demos/datepicker/images/calendar.gif" alt="..." title="...">
+                                        <input type="text" id="datepicker" class="input-text from-control" ngModel name="datepicker" [(ngModel)]="currentDate" required /><img class="ui-datepicker-trigger" src="https://jqueryui.com/resources/demos/datepicker/images/calendar.gif" alt="..." title="...">
                                     </div>
                                 </div>
                                 <!-- fluidRow -->
@@ -79,14 +79,15 @@
                                         <label class="label">Time Stamp</label>
                                         <p>{{timeStamp}}</p>
                                     </div>
-                                    <div class="form-row">
+                                    <div class="form-row form-group">
                                         <label class="label">Time</label>
-                                        <input class="input-text" id="task-time-{{i}}" name="task-time-{{i}}" type="number" required min="0" pattern="^[0-9]" [(ngModel)]="timeStamp.time" />
+                                        <input class="input-text form-control" id="task-time-{{i}}" name="task-time-{{i}}" type="number" required min="0" pattern="^[0-9]" [(ngModel)]="timeStamp.time"/>
+
                                     </div>
                                     <!--form-row-->
-                                    <div class="form-row">
+                                    <div class="form-row form-group">
                                         <label class="label">Description</label>
-                                        <input class="input-text" type="text" id="task-description-{{i}}" name="task-description-{{i}}" autocomplete="off" auto-complete [(ngModel)]="timeStamp.description" [source]="descriptionSource">
+                                        <input class="input-text form-control" type="text" id="task-description-{{i}}" name="task-description-{{i}}" autocomplete="off" auto-complete [(ngModel)]="timeStamp.description" [source]="descriptionSource">
                                     </div>
                                 </div>
                             </div>
@@ -101,9 +102,10 @@
                                     <input class="input-text" type="text" id="task-description" name="task-description" autocomplete="off" auto-complete ngModel [source]="descriptionSource">
                                 </div>
                             </ng-template>
+                                <p *ngIf="!timeDescription.valid && timeDescription.touched" class="has-danger">Time Entry details are invalid!</p>
                             <div class="form-footer">
                                 <div class="form-row">
-                                    <button name="formSend" id="formSend" type="submit" class="btn btn-fill">Add</button>
+                                    <button name="formSend" id="formSend" type="submit" class="btn btn-fill" [disabled]="!f.valid">Add</button>
                                     <button name="formcancel" id="formcancel" type="reset" class="btn btn-fill" (click)="onCancelClick()">Cancel</button>
                                 </div>
                                 <!--row-->

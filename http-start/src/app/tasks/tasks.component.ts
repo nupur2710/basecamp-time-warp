@@ -198,25 +198,21 @@ export class TasksComponent implements OnInit {
             if (responseData && responseData["todo-lists"] && responseData["todo-lists"]["todo-list"]) {
                 var todoItemsObject = {},
                     todoItemArray = [],
-                    object = responseData["todo-lists"]["todo-list"],
-                    todoList = Object.keys(object).map(function(e) {
-                        return [object[e]];
-                    });
+                    todoList = responseData["todo-lists"]["todo-list"];
 
-                for (listIndex = 0; listIndex < todoList.length; listIndex++) {
+
+                for (listIndex = 0; listIndex < Object.keys(todoList).length; listIndex++) {
 
                     //get the list of todo items inside todos
-                    if (todoList[0][0]['todo-items']['todo-item']) {
+                    if (todoList[listIndex]['todo-items']['todo-item']) {
                         todoItems = [];
                         todoItemsId = [];
-                        todoItemsObject = todoList[listIndex][0]['todo-items']['todo-item'];
+                        todoItemsObject = todoList[listIndex]['todo-items']['todo-item'];
                         if (todoItemsObject.hasOwnProperty('0')) {
-                            todoItemArray = Object.keys(todoItemsObject).map(function(e) {
-                                return [todoItemsObject[e]];
-                            });
-                            for (itemIndex = 0; itemIndex < todoItemArray.length; itemIndex++) {
+
+                            for (itemIndex = 0; itemIndex < Object.keys(todoItemsObject).length; itemIndex++) {
                                 listItem = {};
-                                singleItem = todoItemArray[itemIndex][0];
+                                singleItem = todoItemsObject[itemIndex];
                                 this.generateTodoAndFinalTodoArray(singleItem, todoItems, recentTodoItems, todoItemsId);
 
                             }
@@ -226,9 +222,10 @@ export class TasksComponent implements OnInit {
                         }
 
                     }
+                    //populate the all todos array with the todoList- todoItems inside each todoList
                     self.todos.push({
-                        todoName: todoList[listIndex][0]['name'],
-                        todoId: todoList[listIndex][0]['id'],
+                        todoName: todoList[listIndex]['name'],
+                        todoId: todoList[listIndex]['id'],
                         todoItems: todoItems
                     });
 
@@ -241,13 +238,8 @@ export class TasksComponent implements OnInit {
 
             self.setAllTodoIdsToLocalStorage();
             //update the final list only if the newly fetched data has more todos then the currrently stored
-            // if (recentTodoItems.length != self.finalTodoList.length) {
-            //     if (recentTodoItems.length > self.finalTodoList.length) {
-            this.triggerEventsForNewlyActiveTodos(recentTodoItems, self.finalTodoList);
-            // self.generateTodosAndRecentTodos(recentTodoItems);
-            //     }
 
-            // }
+            this.triggerEventsForNewlyActiveTodos(recentTodoItems, self.finalTodoList);
         }
 
         this.updateSeenNotificationArray();
@@ -601,13 +593,14 @@ export class TasksComponent implements OnInit {
 
     //Click event for enter time button
     onEnterTime(item) {
+        this.currentItem = item;
         $('.modal-content').toggleClass('popup-show');
         $('.close').toggleClass('close-show');
 
         //hide the above task added successfully button
         this.hideSuccessMessage();
         //set the item corresponding to which, the time entry is to be mad
-        this.currentItem = item;
+
     }
 
     //Event when Enter time form is closed
@@ -658,6 +651,7 @@ export class TasksComponent implements OnInit {
                 };
                 timeEntryRequestArray.push(this.serverService.postTimeEntries(currentItem, timeEntryObject));
             }
+              f.reset();
             Observable.forkJoin(timeEntryRequestArray).subscribe(
                 (results) => {
                     self.getTimeEntryResponse(results);
@@ -672,12 +666,13 @@ export class TasksComponent implements OnInit {
                     "description": f.value['task-description']
                 }
             };
+              f.reset();
             this.serverService.postTimeEntries(currentItem, timeEntryObject).subscribe(
                 (response) => self.getTimeEntryResponse(response),
                 (error) => console.log(error)
             );
         }
-        f.reset();
+      
 
     }
 
