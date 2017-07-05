@@ -26,9 +26,6 @@ function validateTimeDescription(): ValidatorFn {
     ]
 })
 
-// @Directive({
-//     selector: '[timeDescpValidation]'
-// })
 export class TimeDescriptionDirective implements Validator, OnInit, OnChanges {
     validator: ValidatorFn;
     @Input() public timeDescpValidation: any;
@@ -38,9 +35,6 @@ export class TimeDescriptionDirective implements Validator, OnInit, OnChanges {
         this.validator = validateTimeDescription();
     }
 
-    // @HostListener('change') ngOnChanges() {
-    //     console.log('test');
-    // }
 
     ngOnChanges(changes) {
         if (changes.input) {
@@ -50,10 +44,6 @@ export class TimeDescriptionDirective implements Validator, OnInit, OnChanges {
 
     ngOnInit() {
     }
-    // constructor() {
-    //     debugger
-    //     this.validator = validateTimeDescription();
-    // }
 
     validate(c: FormControl) {
         return this.validator(c);

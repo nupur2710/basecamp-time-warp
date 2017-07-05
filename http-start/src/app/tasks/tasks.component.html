@@ -82,12 +82,12 @@
                                     </div>
                                     <div class="form-row form-group">
                                         <label class="label">Time</label>
-                                        <input class="input-text form-control" id="task-time-{{i}}" name="task-time-{{i}}" type="number" required min="0" [(ngModel)]="timeStamp.time" />
+                                        <input class="input-text form-control" id="task-time-{{i}}" name="task-time-{{i}}" type="number" required min="0" #timeStamp.time="ngModel" ngModel />
                                     </div>
                                     <!--form-row-->
                                     <div class="form-row form-group">
                                         <label class="label">Description</label>
-                                        <input class="input-text form-control" type="text" id="task-description-{{i}}" name="task-description-{{i}}" required [(ngModel)]="timeStamp.description">
+                                        <ng2-completer #timeStamp.description="ngModel" ngModel id="task-description-{{i}}" name="task-description-{{i}}" [datasource]="descriptionSource" class="form-control" [minSearchLength]="0" required></ng2-completer>
                                     </div>
                                 </div>
                             </div>

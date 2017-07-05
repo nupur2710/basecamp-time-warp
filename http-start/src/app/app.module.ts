@@ -8,8 +8,6 @@ import { Routes, RouterModule } from '@angular/router';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 import { AppRoutingModule } from './app-routing.module';
-// import { NguiAutoCompleteModule } from '@ngui/auto-complete';
- // import { Ng2AutoCompleteModule } from 'ng2-auto-complete';
  import { Ng2CompleterModule } from "ng2-completer";
 import { DatePickerModule } from 'ng2-datepicker';
 
