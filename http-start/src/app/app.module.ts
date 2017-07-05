@@ -8,7 +8,10 @@ import { Routes, RouterModule } from '@angular/router';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 import { AppRoutingModule } from './app-routing.module';
-import { NguiAutoCompleteModule } from '@ngui/auto-complete';
+// import { NguiAutoCompleteModule } from '@ngui/auto-complete';
+ // import { Ng2AutoCompleteModule } from 'ng2-auto-complete';
+ import { Ng2CompleterModule } from "ng2-completer";
+import { DatePickerModule } from 'ng2-datepicker';
 
 import { AppComponent } from './app.component';
 import { AuthServerService } from './shared/auth-server.service';
@@ -19,6 +22,8 @@ import { EnterTimeComponent } from './enter-time/enter-time.component';
 import { LoginComponent } from './login/login.component';
 import { UserDetailsComponent } from './user-details/user-details.component';
 
+import {TimeDescriptionDirective} from './tasks/timeDescription.directive';
+
 @NgModule({
     declarations: [
         AppComponent,
@@ -26,7 +31,8 @@ import { UserDetailsComponent } from './user-details/user-details.component';
         TasksComponent,
         EnterTimeComponent,
         LoginComponent,
-        UserDetailsComponent       
+        UserDetailsComponent,       
+        TimeDescriptionDirective
     ],
     imports: [
         BrowserModule,
@@ -34,7 +40,8 @@ import { UserDetailsComponent } from './user-details/user-details.component';
         HttpModule,
         BrowserAnimationsModule,
         AppRoutingModule,
-        NguiAutoCompleteModule
+        Ng2CompleterModule,
+        DatePickerModule
        
     ],
     providers: [AuthServerService, DataService],

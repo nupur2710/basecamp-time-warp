@@ -35,6 +35,7 @@ export class TasksComponent implements OnInit {
     @ViewChild('f') signupForm: NgForm;
     descriptionSource: any[] = [];
     allTodoIds: any[] = [];
+    taskDescription="";
 
     // subscribe to the accessToken being sent through the url on first login
     // Get the list of tasks - All todos, Recent Todos
@@ -644,14 +645,13 @@ export class TasksComponent implements OnInit {
                 timeEntryObject = {
                     "time-entry": {
                         "person-id": JSON.parse(localStorage.getItem('userDetails'))['person_id'],
-                        "date": $("#datepicker").val(),
-                        "hours": f.value['task-time-' + i],
-                        "description": f.value['task-description-' + i]
+                        "date": $(".datepicker-input").val(),
+                        "hours": f.value.timeDescription['task-time-' + i],
+                        "description": f.value.timeDescription['task-description-' + i]
                     }
                 };
                 timeEntryRequestArray.push(this.serverService.postTimeEntries(currentItem, timeEntryObject));
             }
-              f.reset();
             Observable.forkJoin(timeEntryRequestArray).subscribe(
                 (results) => {
                     self.getTimeEntryResponse(results);
@@ -661,19 +661,23 @@ export class TasksComponent implements OnInit {
             timeEntryObject = {
                 "time-entry": {
                     "person-id": JSON.parse(localStorage.getItem('userDetails'))['person_id'],
-                    "date": $("#datepicker").val(),
-                    "hours": f.value['task-time'],
-                    "description": f.value['task-description']
+                    "date": $(".datepicker-input").val(),
+                    "hours": f.value.timeDescription['tasktime'],
+                    "description": f.value.timeDescription['taskdescription']
                 }
             };
-              f.reset();
             this.serverService.postTimeEntries(currentItem, timeEntryObject).subscribe(
                 (response) => self.getTimeEntryResponse(response),
                 (error) => console.log(error)
             );
         }
       
+        f.reset();
+    }
 
+    valuechange($e){
+        console.log($e);
+        console.log("form value: " , this.signupForm.value.timeDescription)
     }
 
     getTimeEntryResponse(results) {

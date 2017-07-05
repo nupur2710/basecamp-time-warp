@@ -67,7 +67,8 @@
                                 <div class="col col12">
                                     <label class="label">Choose date</label>
                                     <div class="input-with-icon">
-                                        <input type="text" id="datepicker" class="input-text from-control" ngModel name="datepicker" [(ngModel)]="currentDate" required /><img class="ui-datepicker-trigger" src="https://jqueryui.com/resources/demos/datepicker/images/calendar.gif" alt="..." title="...">
+                                        <!-- <input type="text" id="datepicker" class="input-text form-control" ngModel name="datepicker" [(ngModel)]="currentDate"  /><img class="ui-datepicker-trigger" src="https://jqueryui.com/resources/demos/datepicker/images/calendar.gif" alt="..." title="..."> -->
+                                        <ng2-datepicker class="task-datepicker"></ng2-datepicker>
                                     </div>
                                 </div>
                                 <!-- fluidRow -->
@@ -81,28 +82,27 @@
                                     </div>
                                     <div class="form-row form-group">
                                         <label class="label">Time</label>
-                                        <input class="input-text form-control" id="task-time-{{i}}" name="task-time-{{i}}" type="number" required min="0" pattern="^[0-9]" [(ngModel)]="timeStamp.time"/>
-
+                                        <input class="input-text form-control" id="task-time-{{i}}" name="task-time-{{i}}" type="number" required min="0" [(ngModel)]="timeStamp.time" />
                                     </div>
                                     <!--form-row-->
                                     <div class="form-row form-group">
                                         <label class="label">Description</label>
-                                        <input class="input-text form-control" type="text" id="task-description-{{i}}" name="task-description-{{i}}" autocomplete="off" auto-complete [(ngModel)]="timeStamp.description" [source]="descriptionSource">
+                                        <input class="input-text form-control" type="text" id="task-description-{{i}}" name="task-description-{{i}}" required [(ngModel)]="timeStamp.description">
                                     </div>
                                 </div>
                             </div>
                             <ng-template #singleTodoComment>
-                                <div class="form-row">
+                                <div class="form-row form-group">
                                     <label class="label">Time</label>
-                                    <input class="input-text" id="task-time" name="task-time" type="number" required ngModel min="0" pattern="^[0-9]" />
+                                    <input class="input-text form-control" id="tasktime" name="tasktime" type="number" required #tasktime="ngModel" ngModel min="0" />
                                 </div>
                                 <!--form-row-->
-                                <div class="form-row">
+                                <div class="form-row form-group">
                                     <label class="label">Description</label>
-                                    <input class="input-text" type="text" id="task-description" name="task-description" autocomplete="off" auto-complete ngModel [source]="descriptionSource">
+                                    <ng2-completer #taskdescription="ngModel" ngModel id="taskdescription" name="taskdescription" [datasource]="descriptionSource" class="form-control" [minSearchLength]="0" required></ng2-completer>
                                 </div>
                             </ng-template>
-                                <p *ngIf="!timeDescription.valid && timeDescription.touched" class="has-danger">Time Entry details are invalid!</p>
+                            <p *ngIf="!timeDescription.valid && timeDescription.touched" class="has-danger">Time Entry details are invalid!</p>
                             <div class="form-footer">
                                 <div class="form-row">
                                     <button name="formSend" id="formSend" type="submit" class="btn btn-fill" [disabled]="!f.valid">Add</button>
