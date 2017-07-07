@@ -43,7 +43,6 @@ export class TasksComponent implements OnInit {
     constructor(private serverService: AuthServerService, private route: ActivatedRoute, private dataService: DataService) {
         var self = this;
         this.currentItem.name = "";
-        debugger
         this.route
             .queryParams
             .subscribe(params => {
@@ -56,7 +55,6 @@ export class TasksComponent implements OnInit {
                 }
             });
         self.onGetTasks();
-        self.getTimeEntriesDecription();
         self.todos = self.dataService.getTodos();
         self.finalTodoList = self.dataService.getRecentTodos();
 
@@ -122,7 +120,7 @@ export class TasksComponent implements OnInit {
         this.descriptionSource = [];
         var timeEntry, timeEntryArray;
         for (var index = 0; index < results.length; index++) {
-            if (JSON.parse(results[index]['_body']) && JSON.parse(results[index]['_body'])['time-entries'] && JSON.parse(results[index]['_body'])['time-entries']['time-entry']) {
+            if (results[index]['_body'] && JSON.parse(results[index]['_body']) && JSON.parse(results[index]['_body'])['time-entries'] && JSON.parse(results[index]['_body'])['time-entries']['time-entry']) {
                 timeEntry = JSON.parse(results[index]['_body'])['time-entries']['time-entry'];
                 if (timeEntry.hasOwnProperty('0')) {
                     timeEntryArray = Object.keys(timeEntry).map(function(e) {
@@ -244,6 +242,7 @@ export class TasksComponent implements OnInit {
             //update the final list only if the newly fetched data has more todos then the currrently stored
 
             this.triggerEventsForNewlyActiveTodos(recentTodoItems, self.finalTodoList);
+            this.getTimeEntriesDecription();
         }
 
         this.updateSeenNotificationArray();

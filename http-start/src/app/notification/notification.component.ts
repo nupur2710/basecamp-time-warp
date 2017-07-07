@@ -87,6 +87,7 @@ export class NotificationComponent implements OnInit {
     }
 
     createNotification(title, options, todos) {
+        var self = this;
         if (!("Notification" in window)) {
             alert("This browser does not support desktop notification");
         }
@@ -103,7 +104,7 @@ export class NotificationComponent implements OnInit {
             Notification.requestPermission(function(permission) {
                 // If the user accepts, let's create a notification
                 if (permission === "granted") {
-                    this.createNotificationObject(title, options, todos);
+                    self.createNotificationObject(title, options, todos);
                 }
             });
         }

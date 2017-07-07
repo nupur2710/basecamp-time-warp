@@ -32,8 +32,7 @@ export class LoginComponent implements OnInit {
         this.setUserDetails();
     }
 
-    ngOnInit() {
-    }
+    ngOnInit() {}
 
     setUserDetails() {
         var self = this;

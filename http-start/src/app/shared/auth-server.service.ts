@@ -14,7 +14,6 @@ export class AuthServerService {
     }
 
     getUser() {
-        debugger
         var url = this.baseUrl + 'me';
         return this.http.get(url, {
             params: {
@@ -51,8 +50,7 @@ export class AuthServerService {
         });
     }
 
-    postTimeEntries(item, data) {
-       
+    postTimeEntries(item, data) {       
         var url = this.baseUrl + 'todoItems/makeTimeEntries';
         return this.http.get(url, {
             params: {
