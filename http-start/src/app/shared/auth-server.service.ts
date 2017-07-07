@@ -14,6 +14,7 @@ export class AuthServerService {
     }
 
     getUser() {
+        debugger
         var url = this.baseUrl + 'me';
         return this.http.get(url, {
             params: {

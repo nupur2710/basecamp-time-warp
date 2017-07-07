@@ -61,19 +61,16 @@
                         <div class="form-header task-form">
                             <h4 class="form-title">{{currentItem.name}}</h4>
                         </div>
-                        <!--form-header-->
                         <div class="form-body" ngModelGroup="timeDescription" #timeDescription="ngModelGroup">
                             <div class="row form-row">
                                 <div class="col col12">
                                     <label class="label">Choose date</label>
                                     <div class="input-with-icon">
-                                        <!-- <input type="text" id="datepicker" class="input-text form-control" ngModel name="datepicker" [(ngModel)]="currentDate"  /><img class="ui-datepicker-trigger" src="https://jqueryui.com/resources/demos/datepicker/images/calendar.gif" alt="..." title="..."> -->
+                                      
                                         <ng2-datepicker class="task-datepicker"></ng2-datepicker>
                                     </div>
                                 </div>
-                                <!-- fluidRow -->
                             </div>
-                            <!--form-row-->
                             <div class="more-comments" *ngIf="currentItem.timeStamp; else singleTodoComment">
                                 <div class="repeat-time and description" *ngFor="let timeStamp of currentItem.timeStamp;let i=index">
                                     <div class="form-row">
@@ -84,7 +81,6 @@
                                         <label class="label">Time</label>
                                         <input class="input-text form-control" id="task-time-{{i}}" name="task-time-{{i}}" type="number" required min="0" #timeStamp.time="ngModel" ngModel />
                                     </div>
-                                    <!--form-row-->
                                     <div class="form-row form-group">
                                         <label class="label">Description</label>
                                         <ng2-completer #timeStamp.description="ngModel" ngModel id="task-description-{{i}}" name="task-description-{{i}}" [datasource]="descriptionSource" class="form-control" [minSearchLength]="0" required></ng2-completer>
@@ -96,10 +92,9 @@
                                     <label class="label">Time</label>
                                     <input class="input-text form-control" id="tasktime" name="tasktime" type="number" required #tasktime="ngModel" ngModel min="0" />
                                 </div>
-                                <!--form-row-->
                                 <div class="form-row form-group">
                                     <label class="label">Description</label>
-                                    <ng2-completer #taskdescription="ngModel" ngModel id="taskdescription" name="taskdescription" [datasource]="descriptionSource" class="form-control" [minSearchLength]="0" required></ng2-completer>
+                                    <ng2-completer size="50" #taskdescription="ngModel" ngModel id="taskdescription" name="taskdescription" [datasource]="descriptionSource" class="form-control" [minSearchLength]="0" required></ng2-completer>
                                 </div>
                             </ng-template>
                             <p *ngIf="!timeDescription.valid && timeDescription.touched" class="has-danger">Time Entry details are invalid!</p>
@@ -108,14 +103,10 @@
                                     <button name="formSend" id="formSend" type="submit" class="btn btn-fill" [disabled]="!f.valid">Add</button>
                                     <button name="formcancel" id="formcancel" type="reset" class="btn btn-fill" (click)="onCancelClick()">Cancel</button>
                                 </div>
-                                <!--row-->
                             </div>
-                            <!--form-footer-->
                         </div>
                     </form>
-                    <!--form-->
                 </div>
-                <!-- segment -->
             </div>
         </div>
         <span class="close" (click)="onCloseClick()">X</span>

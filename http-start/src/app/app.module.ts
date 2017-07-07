@@ -20,8 +20,6 @@ import { EnterTimeComponent } from './enter-time/enter-time.component';
 import { LoginComponent } from './login/login.component';
 import { UserDetailsComponent } from './user-details/user-details.component';
 
-import {TimeDescriptionDirective} from './tasks/timeDescription.directive';
-
 @NgModule({
     declarations: [
         AppComponent,
@@ -29,8 +27,7 @@ import {TimeDescriptionDirective} from './tasks/timeDescription.directive';
         TasksComponent,
         EnterTimeComponent,
         LoginComponent,
-        UserDetailsComponent,       
-        TimeDescriptionDirective
+        UserDetailsComponent
     ],
     imports: [
         BrowserModule,

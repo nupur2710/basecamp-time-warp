@@ -9,6 +9,8 @@ export class DataService {
     nameOfUser = "";
     userNameUpdated = new Subject < string > ();
     code = "";
+    accessTokenAdded = new Subject < {} > ();
+
     todos = [];
     todosUpdated = new Subject < Todo[] > ();
     recentTodos = [];
@@ -62,6 +64,11 @@ export class DataService {
 
     openEnterTimeForm(todos) {
         this.notificationClicked.next(todos);
+    }
+
+    addAccessToken(token) {
+        this.code = token;
+        this.accessTokenAdded.next({});
     }
 
 

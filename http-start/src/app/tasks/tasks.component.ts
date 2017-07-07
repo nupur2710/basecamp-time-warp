@@ -35,7 +35,7 @@ export class TasksComponent implements OnInit {
     @ViewChild('f') signupForm: NgForm;
     descriptionSource: any[] = [];
     allTodoIds: any[] = [];
-    taskDescription="";
+    taskDescription = "";
 
     // subscribe to the accessToken being sent through the url on first login
     // Get the list of tasks - All todos, Recent Todos
@@ -43,13 +43,16 @@ export class TasksComponent implements OnInit {
     constructor(private serverService: AuthServerService, private route: ActivatedRoute, private dataService: DataService) {
         var self = this;
         this.currentItem.name = "";
+        debugger
         this.route
             .queryParams
             .subscribe(params => {
-                self.dataService.code = params['accessToken'] || self.getAccessTokenToLocalStorage();
-                console.log("code: " + self.dataService.code);
-                if (self.dataService.code) {
-                    self.setAccessTokenToLocalStorage(self.dataService.code);
+                let accessToken = params['accessToken'] || self.getAccessTokenToLocalStorage();
+
+                console.log("code: " + accessToken);
+                if (accessToken) {
+                    self.setAccessTokenToLocalStorage(accessToken);
+                    self.dataService.addAccessToken(accessToken);
                 }
             });
         self.onGetTasks();
@@ -671,13 +674,12 @@ export class TasksComponent implements OnInit {
                 (error) => console.log(error)
             );
         }
-      
         f.reset();
     }
 
-    valuechange($e){
+    valuechange($e) {
         console.log($e);
-        console.log("form value: " , this.signupForm.value.timeDescription)
+        console.log("form value: ", this.signupForm.value.timeDescription)
     }
 
     getTimeEntryResponse(results) {
