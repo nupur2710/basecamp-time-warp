@@ -1,8 +1,9 @@
-.has-danger{
-	color:red;
+.has-danger {
+    color: red;
 }
-.btn[disabled]:hover{
-	    border: 1px solid #999999;
+
+.btn[disabled]:hover {
+    border: 1px solid #999999;
     background-color: #cccccc;
     color: #666666;
 }
