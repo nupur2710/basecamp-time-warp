@@ -21,7 +21,6 @@ export class NotificationComponent implements OnInit {
     notification;
 
     constructor(private dataService: DataService) {
-
     }
 
     ngOnInit() {
@@ -96,7 +95,6 @@ export class NotificationComponent implements OnInit {
         else if (Notification.permission === "granted") {
             // If it's okay let's create a notification
             this.createNotificationObject(title, options, todos);
-            // notification.onshow = this.mycloseFunction(event);
         }
 
         // Otherwise, we need to ask the user for permission

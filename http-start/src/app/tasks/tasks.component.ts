@@ -29,8 +29,8 @@ export class TasksComponent implements OnInit {
         'timeEntry': [],
         'description': []
     };
-
-    currentDate: string;
+    options;
+    // currentDate: Date;
     seenNotification: any[] = [];
     @ViewChild('f') signupForm: NgForm;
     descriptionSource: any[] = [];
@@ -68,6 +68,10 @@ export class TasksComponent implements OnInit {
         window.setInterval(function() {
             this.getTimeEntriesDecription();
         }.bind(this), 600000);
+
+        this.options= {
+            "initialDate" : new Date()
+        };
     }
 
 
