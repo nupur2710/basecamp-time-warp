@@ -64,10 +64,10 @@
                         <div class="form-body" ngModelGroup="timeDescription" #timeDescription="ngModelGroup">
                             <div class="row form-row">
                                 <div class="col col12">
-                                    <label class="label">Choose date</label>
+                                    <label class="label">Choose date<sup style="color:red">*</sup></label>
                                     <div class="input-with-icon">
                                       
-                                        <ng2-datepicker class="task-datepicker" [options]="options"></ng2-datepicker>
+                                        <ng2-datepicker class="task-datepicker" [options]="options" required></ng2-datepicker>
                                     </div>
                                 </div>
                             </div>
@@ -78,26 +78,26 @@
                                         <p>{{timeStamp}}</p>
                                     </div>
                                     <div class="form-row form-group">
-                                        <label class="label">Time</label>
+                                        <label class="label">Time<sup style="color:red">*</sup></label>
                                         <input class="input-text form-control" id="task-time-{{i}}" name="task-time-{{i}}" type="number" required min="0" #timeStamp.time="ngModel" ngModel />
                                     </div>
                                     <div class="form-row form-group">
                                         <label class="label">Description</label>
-                                        <ng2-completer #timeStamp.description="ngModel" ngModel id="task-description-{{i}}" name="task-description-{{i}}" [datasource]="descriptionSource" class="form-control" [minSearchLength]="0" required></ng2-completer>
+                                        <ng2-completer #timeStamp.description="ngModel" ngModel id="task-description-{{i}}" name="task-description-{{i}}" [datasource]="descriptionSource" class="form-control" [minSearchLength]="1"></ng2-completer>
                                     </div>
                                 </div>
                             </div>
                             <ng-template #singleTodoComment>
                                 <div class="form-row form-group">
-                                    <label class="label">Time</label>
+                                    <label class="label">Time<sup style="color:red">*</sup></label>
                                     <input class="input-text form-control" id="tasktime" name="tasktime" type="number" required #tasktime="ngModel" ngModel min="0" />
                                 </div>
                                 <div class="form-row form-group">
                                     <label class="label">Description</label>
-                                    <ng2-completer size="50" #taskdescription="ngModel" ngModel id="taskdescription" name="taskdescription" [datasource]="descriptionSource" class="form-control" [minSearchLength]="0" required></ng2-completer>
+                                    <ng2-completer size="50" #taskdescription="ngModel" ngModel id="taskdescription" name="taskdescription" [datasource]="descriptionSource" class="form-control" [minSearchLength]="1" [textNoResults]=""></ng2-completer>
                                 </div>
                             </ng-template>
-                            <p *ngIf="!timeDescription.valid && timeDescription.touched" class="has-danger">Time Entry details are invalid!</p>
+                            <!--<p *ngIf="!timeDescription.valid && timeDescription.touched" class="has-danger">Time Entry details are invalid!</p>-->
                             <div class="form-footer">
                                 <div class="form-row">
                                     <button name="formSend" id="formSend" type="submit" class="btn btn-fill" [disabled]="!f.valid">Add</button>

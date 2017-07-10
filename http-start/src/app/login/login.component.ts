@@ -15,6 +15,7 @@ export class LoginComponent implements OnInit {
     user = "";
     verificationCode;
     hasAuthenticationToken;
+    loggedIn: boolean = false;
 
     subscription: Subscription;
 
@@ -37,6 +38,7 @@ export class LoginComponent implements OnInit {
     setUserDetails() {
         var self = this;
         if (this.isLoggedIn()) {
+            this.loggedIn = true;
             if (window.localStorage.getItem("userDetails")) {
                 var userDetails = JSON.parse(localStorage.getItem("userDetails"));
                 this.user = userDetails['user-fname'] + " " + userDetails['user-lname'];
@@ -74,14 +76,17 @@ export class LoginComponent implements OnInit {
         window.localStorage.setItem('userDetails', JSON.stringify(userDetails));
     }
 
-    onLoginClick() {
+    onLoginClick($event) {
 
         // prod link "https://launchpad.37signals.com/authorization/new?client_id=d119a53aed7fabe1407f1e34f7f29053da10b3bd&redirect_uri=http%3A%2F192.168.0.175%3A3001%2Fauth%2Fbasecamp&type=web_server"
 
         //local link "https://launchpad.37signals.com/authorization/new?client_id=f580e2bd7a470f2bade0a2670696e1c3edb7b7d1&redirect_uri=http%3A%2F%2F127.0.0.1%3A3001%2Fauth%2Fbasecamp&type=web_server"
 
+        if (!this.loggedIn) {
+            $event.currentTarget.className += " logging-in"
+            window.location.href = "https://launchpad.37signals.com/authorization/new?client_id=f580e2bd7a470f2bade0a2670696e1c3edb7b7d1&redirect_uri=http%3A%2F%2F127.0.0.1%3A3001%2Fauth%2Fbasecamp&type=web_server";
+        }
 
-        window.location.href = "https://launchpad.37signals.com/authorization/new?client_id=f580e2bd7a470f2bade0a2670696e1c3edb7b7d1&redirect_uri=http%3A%2F%2F127.0.0.1%3A3001%2Fauth%2Fbasecamp&type=web_server";
     }
 
     isLoggedIn() {

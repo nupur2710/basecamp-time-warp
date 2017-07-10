@@ -1,8 +1,8 @@
 <div class="row" *ngIf="!isLoggedIn(); else welcome">
     <div class="col col12 app-container">
-        <h1 class="title">Welcome to the Basecamp Time Wrap</h1>
+        <h1 class="title">Welcome to the Basecamp Time Warp</h1>
         <div class="button-container">
-            <a class="btn-continue" (click)="onLoginClick()">Click to Login</a>
+            <a class="btn-continue" (click)="onLoginClick($event)">Click to Login</a>
         </div>
     </div>
 </div>

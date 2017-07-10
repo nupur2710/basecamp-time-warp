@@ -47,12 +47,9 @@ app.use(function(req, res, next) {
 //     res.send(post)
 // });
 
-
-
 app.get("/auth/basecamp", function(req, res, next) {
     verificationCode = req.query.code;
     console.log("my code is " + verificationCode);
-
 
     // prod link "https://launchpad.37signals.com/authorization/token?type=web_server&client_id=d119a53aed7fabe1407f1e34f7f29053da10b3bd&redirect_uri=http%3A%2F%2F192.168.0.175%3A3001%2F%2Fauth%2Fbasecamp&client_secret=04241c29abfcfce82686bd384e8585b722abd14e&code=" 
 
@@ -121,7 +118,6 @@ app.get('/me', function(req, res) {
 
 //get the time entries corresponding to a single todo item
 app.get('/todoItems/timeEntries', function(req, res) {
-
     request({
         url: url + '/todo_items/' + req.query.itemId + '/time_entries.xml',
         headers: {
@@ -129,7 +125,6 @@ app.get('/todoItems/timeEntries', function(req, res) {
         }
     }, function(error, response, body) {
         to_json(body, function(error, data) {
-
             res.json(data);
         });
 
@@ -138,22 +133,22 @@ app.get('/todoItems/timeEntries', function(req, res) {
 
 //post time entry on a todo item
 app.get('/todoItems/makeTimeEntries', function(req, res) {
-    var data = jsonxml(req.query.data);
-    console.log(data);
+    if (req.query.data) {
+        var data = jsonxml(req.query.data);
+        request.post({
+            url: url + '/todo_items/' + req.query.itemId + '/time_entries.xml',
+            headers: {
+                "Authorization": "Bearer " + req.query.accessToken,
+                "Content-Type": "application/xml"
+            },
+            body: data
+        }, function(error, response, body) {
+            if (!error) {
+                res.json({ "message": "success" })
+            }
+        });
+    }
 
-    request.post({
-        url: url + '/todo_items/' + req.query.itemId + '/time_entries.xml',
-        headers: {
-            "Authorization": "Bearer " + req.query.accessToken,
-            "Content-Type": "application/xml"
-        },
-        body: data
-    }, function(error, response, body) {
-        if (!error) {
-            res.json({ "message": "success" })
-        }
-
-    });
 });
 
 //get the comments corresponding to a single todo item
@@ -167,7 +162,6 @@ app.get('/todoItems/comments', function(req, res) {
         to_json(body, function(error, data) {
             res.json(data);
         });
-
     });
 });
 

@@ -1,0 +1,11 @@
+    a.logging-in {
+          border: 1px solid #999999;
+    background-color: #cccccc;
+    color: #666666;
+    }
+    
+    a.logging-in:hover {
+          border: 1px solid #999999;
+    background-color: #cccccc;
+    color: #666666;
+    }

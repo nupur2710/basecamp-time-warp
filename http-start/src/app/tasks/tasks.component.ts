@@ -69,8 +69,8 @@ export class TasksComponent implements OnInit {
             this.getTimeEntriesDecription();
         }.bind(this), 600000);
 
-        this.options= {
-            "initialDate" : new Date()
+        this.options = {
+            "initialDate": new Date()
         };
     }
 
@@ -563,7 +563,7 @@ export class TasksComponent implements OnInit {
                                     "date": singleItem['date'],
                                     "person": singleItem['person-name'],
                                     "hours": singleItem['hours'],
-                                    "description": singleItem['description']
+                                    "description": typeof(singleItem.description) === "string" ? singleItem['description'] : ""
                                 };
                                 finalTimeLogs.push(listItem);
                                 totalHours += Number(singleItem['hours']);
@@ -579,7 +579,7 @@ export class TasksComponent implements OnInit {
                                 "date": singleItem['date'],
                                 "person": singleItem['person-name'],
                                 "hours": singleItem['hours'],
-                                "description": singleItem['description']
+                                "description": typeof(singleItem.description) === "string" ? singleItem['description'] : ""
                             };
                             finalTimeLogs.push(listItem);
                             totalHours += Number(singleItem['hours']);
@@ -646,6 +646,7 @@ export class TasksComponent implements OnInit {
     onSubmit(f, currentItem) {
         var timeEntryObject, timeEntryRequestArray = [],
             self = this;
+        debugger
         if (currentItem.timeStamp) {
             for (let i = 0; i < currentItem.timeStamp.length; i++) {
                 timeEntryObject = {
