@@ -59,7 +59,7 @@
                     </div>
                     <form id="normalform" class="form" (ngSubmit)="onSubmit(f, currentItem)" #f="ngForm">
                         <div class="form-header task-form">
-                            <h4 class="form-title">{{currentItem.name}}</h4>
+                            <h4 class="form-title">{{currentItem.name || ''}}</h4>
                         </div>
                         <div class="form-body" ngModelGroup="timeDescription" #timeDescription="ngModelGroup">
                             <div class="row form-row">

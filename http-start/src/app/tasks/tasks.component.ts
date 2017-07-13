@@ -17,14 +17,14 @@ declare const $: JQueryStatic;
     styleUrls: ['./tasks.component.css']
 })
 export class TasksComponent implements OnInit {
-    todos: any[] = [];
+    todos: any[] = []; // better typing with expected structure
     recentTodos: any[] = [];
     subscription: Subscription;
     finalTodoList: any[] = [];
     finalTimeLogs: any[] = [];
     currentItem = {
         "name": "",
-        "newCommentCount": 0,
+        "newCommentCount": 0, // consistency in quotes - keys don't need them :-)
         'timeStamp': [],
         'timeEntry': [],
         'description': []
@@ -50,11 +50,11 @@ export class TasksComponent implements OnInit {
 
                 console.log("code: " + accessToken);
                 if (accessToken) {
-                    self.setAccessTokenToLocalStorage(accessToken);
+                    self.setAccessTokenToLocalStorage(accessToken); // you don't need to use self if inline functions
                     self.dataService.addAccessToken(accessToken);
                 }
-            });
-        self.onGetTasks();
+            }); // bind this function with this context rather than self (if you have to)
+        self.onGetTasks(); // why self?
         self.todos = self.dataService.getTodos();
         self.finalTodoList = self.dataService.getRecentTodos();
 

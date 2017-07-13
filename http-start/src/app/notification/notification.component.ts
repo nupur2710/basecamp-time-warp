@@ -72,7 +72,7 @@ export class NotificationComponent implements OnInit {
                 icon: "http://icons.veryicon.com/256/Internet%20%26%20Web/Socialmedia/Basecamp.png"
             };
         if (todos.newCommentCount) {
-            if (todos.newCommentCount > 1) {
+            if (todos.newCommentCount > 1) { // title = `Blah blah... ${newCommentCount > 1 ? 'comments' : 'comment'}..`
                 title = "Hi " + user + ", looks like you just added " + todos.newCommentCount + " comments to: " + titleName + ".";
             } else {
                 title = "Hi " + user + ", looks like you just added " + todos.newCommentCount + " comment to: " + titleName + ".";
