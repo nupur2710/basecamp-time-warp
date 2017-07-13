@@ -1,3 +1,4 @@
+// please use a linter - with good linting rules
 var express = require('express');
 var app = express();
 
@@ -6,7 +7,8 @@ var querystring = require('querystring');
 var jsonxml = require('jsontoxml');
 
 var to_json = require('xmljson').to_json;
-var request = require('request'),
+// one variable on one line
+var request = require('request'), 
     url = 'https://paperplane.basecamphq.com',
     verificationCode,
     accessToken,
@@ -49,14 +51,14 @@ app.use(function(req, res, next) {
 
 app.get("/auth/basecamp", function(req, res, next) {
     verificationCode = req.query.code;
-    console.log("my code is " + verificationCode);
+    console.log("my code is " + verificationCode); // always make it a point to remove logs when deploying - use a logging library to supress unnecessary loglines on prod
 
     // prod link "https://launchpad.37signals.com/authorization/token?type=web_server&client_id=d119a53aed7fabe1407f1e34f7f29053da10b3bd&redirect_uri=http%3A%2F%2F192.168.0.175%3A3001%2F%2Fauth%2Fbasecamp&client_secret=04241c29abfcfce82686bd384e8585b722abd14e&code=" 
-
+    // use process.env to get links instead of hardcoding
     //local link https://launchpad.37signals.com/authorization/token?type=web_server&client_id=f580e2bd7a470f2bade0a2670696e1c3edb7b7d1&redirect_uri=http%3A%2F%2F127.0.0.1%3A3001%2Fauth%2Fbasecamp&client_secret=67090f417bb8ef3d26f9aab9529e394539984f5d&code=
 
     request.post({
-        url: "https://launchpad.37signals.com/authorization/token?type=web_server&client_id=f580e2bd7a470f2bade0a2670696e1c3edb7b7d1&redirect_uri=http%3A%2F%2F127.0.0.1%3A3001%2Fauth%2Fbasecamp&client_secret=67090f417bb8ef3d26f9aab9529e394539984f5d&code=" + verificationCode,
+        url: "https://launchpad.37signals.com/authorization/token?type=web_server&client_id=f580e2bd7a470f2bade0a2670696e1c3edb7b7d1&redirect_uri=http%3A%2F%2F127.0.0.1%3A3001%2Fauth%2Fbasecamp&client_secret=67090f417bb8ef3d26f9aab9529e394539984f5d&code=" + verificationCode, // all codes in config file and shouldn't be checked in
 
     }, function(error, response, body) {
         console.log(body);
@@ -75,7 +77,7 @@ app.get("/auth/basecamp", function(req, res, next) {
         // prod link http://192.168.0.175:8010/tasks?accessToken=
 
         //local link http://127.0.0.1:4200/tasks?accessToken=
-        return res.redirect('http://127.0.0.1:4200/tasks?accessToken=' + accessToken);
+        return res.redirect('http://127.0.0.1:4200/tasks?accessToken=' + accessToken); // alternate way is to configure basecamp redirect uri to localhost (angular app) and then use server calls - this is safer as access token is not in query string (only code is)
     });
 
 });
@@ -89,11 +91,12 @@ app.get("/message", function(req, res) {
 //get all the todos assigned to the user
 app.get('/todoLists', function(req, res) {
     request({
-        url: url + '/todo_lists.xml',
+        url: url + '/todo_lists.xml', // use template literals instead of string concat
         headers: {
-            "Authorization": "Bearer " + req.query.accessToken
+            "Authorization": "Bearer " + req.query.accessToken // you can configure the request library to do this automatically
         }
     }, function(error, response, body) {
+        // error handling?
         to_json(body, function(error, data) {
             res.json(data);
         });
@@ -109,6 +112,7 @@ app.get('/me', function(req, res) {
             "Authorization": "Bearer " + req.query.accessToken
         }
     }, function(error, response, body) {
+        // error handling? always handle error cases - else we'll have a hung request
         to_json(body, function(error, data) {
             res.json(data);
         });

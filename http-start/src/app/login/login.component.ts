@@ -41,7 +41,7 @@ export class LoginComponent implements OnInit {
             this.loggedIn = true;
             if (window.localStorage.getItem("userDetails")) {
                 var userDetails = JSON.parse(localStorage.getItem("userDetails"));
-                this.user = userDetails['user-fname'] + " " + userDetails['user-lname'];
+                this.user = userDetails['user-fname'] + " " + userDetails['user-lname']; // template literals
                 this.router.navigate(['/tasks']);
 
             } else {
@@ -60,7 +60,7 @@ export class LoginComponent implements OnInit {
 
                             }
                         },
-                        (error) => console.log(error)
+                        (error) => console.log(error) // handle on the UI
                     );
             }
 
