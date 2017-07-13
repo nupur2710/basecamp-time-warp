@@ -6,5 +6,6 @@
 3. ng serve
 
 # To Run the node server (server)
-1. npm install
-2. npm start
+1. cd server
+2. npm install
+3. npm start
