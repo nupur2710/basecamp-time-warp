@@ -1,3 +1,5 @@
+// why is this file here? :-|
+
 var express = require('express');
 var path = require('path');
 var favicon = require('serve-favicon');
